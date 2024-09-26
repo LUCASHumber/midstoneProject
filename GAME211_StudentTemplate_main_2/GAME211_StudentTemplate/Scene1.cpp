@@ -29,7 +29,7 @@ bool Scene1::OnCreate() {
 	SDL_Surface* image;
 	SDL_Texture* texture;
 
-	image = IMG_Load("pacman.png");
+	image = IMG_Load("Spaceship.png");
 	texture = SDL_CreateTextureFromSurface(renderer, image);
 	game->getPlayer()->setImage(image);
 	game->getPlayer()->setTexture(texture);

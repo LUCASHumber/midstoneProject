@@ -9,7 +9,7 @@
 
 bool PlayerBody::OnCreate()
 {
-    image = IMG_Load( "Pacman.png" );
+    image = IMG_Load( "Spaceship.png" );
     SDL_Renderer *renderer = game->getRenderer();
     texture = SDL_CreateTextureFromSurface( renderer, image );
     if (image == nullptr) {
@@ -53,8 +53,32 @@ void PlayerBody::Render( float scale )
         orientationDegrees, nullptr, SDL_FLIP_NONE );
 }
 
-void PlayerBody::HandleEvents( const SDL_Event& event )
-{
+void PlayerBody::HandleEvents( const SDL_Event& event ){
+    //When A or D is pressed, spaceship moves 90 degrees left (when A is pressed) or right (when D is pressed)
+     //need to figure out rotation
+
+    //User presses A or D
+    if (event.type == SDL_KEYDOWN && event.key.repeat == 0){
+        switch (event.key.keysym.scancode) {
+        case SDL_SCANCODE_A: //will rotate 90 degrees left
+            playerAngle = -90.0f;
+            break;
+        case SDL_SCANCODE_D: //will rotate 90 degrees right
+            playerAngle = 90.0f;
+            break;
+        }
+    }
+    //User release A or D
+    if (event.type == SDL_KEYUP && event.key.repeat == 0) {
+        switch (event.key.keysym.scancode) {
+        case SDL_SCANCODE_A: //stops rotating after rotating 90 degrees left
+            playerAngle = 0.0f;
+            break;
+        case SDL_SCANCODE_D: //stops rotating after rotating 90 degrees right
+            playerAngle = 0.0f;
+            break;
+        }
+    }
 }
 
 void PlayerBody::Update( float deltaTime )
