@@ -10,7 +10,7 @@ Body::Body()
     orientation = 0.0f;
     rotation = 0.0f;
     angular = 0.0f;
-
+    //need gravity (semester 1 code?)
 	image = nullptr;
 }
 

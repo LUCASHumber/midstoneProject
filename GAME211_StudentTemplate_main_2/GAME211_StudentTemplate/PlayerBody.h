@@ -14,6 +14,7 @@
 
 class PlayerBody : public Body
 {
+    float playerAngle = 0.0f;
 protected:
     class GameManager* game;
 
