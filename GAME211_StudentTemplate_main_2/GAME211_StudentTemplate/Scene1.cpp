@@ -53,6 +53,7 @@ void Scene1::Render() {
 	game->RenderPlayer(0.10f);
 
 	SDL_RenderPresent(renderer);
+	
 }
 
 void Scene1::HandleEvents(const SDL_Event& event)
