@@ -165,6 +165,11 @@ void GameManager::RenderPlayer(float scale)
 {
     player->Render(scale);
 }
+void GameManager::RenderShot(float scale)
+{
+    shot->Render(scale);
+}
+
 
 void GameManager::LoadScene( int i )
 {

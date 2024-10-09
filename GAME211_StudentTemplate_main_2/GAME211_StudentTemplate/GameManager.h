@@ -6,6 +6,7 @@
 #include "Timer.h"
 #include "Scene.h"
 #include "PlayerBody.h"
+#include "Projectile.h"
 
 
 class GameManager {
@@ -26,6 +27,7 @@ private:
 
 	// This might be unfamiliar
     class PlayerBody *player;
+	class Projectile *shot;
 
 	void handleEvents();
 	void LoadScene(int i);
@@ -44,7 +46,9 @@ public:
 	float getSceneWidth();
 	Matrix4 getProjectionMatrix();
     PlayerBody* getPlayer(){ return player; }
+	Projectile* getShot() { return shot; }
 	void RenderPlayer(float scale = 1.0f);
+	void RenderShot(float scale = 1.0f);
 	SDL_Renderer* getRenderer();
 
 	void Run();

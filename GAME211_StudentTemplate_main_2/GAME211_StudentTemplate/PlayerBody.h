@@ -12,8 +12,17 @@
 #include "Body.h"
 #include "GameManager.h"
 
+using namespace std;
+
 class PlayerBody : public Body
 {
+    float playerAngle = 0.0f;
+    bool isRotating = false;
+    float boostSpeed = 100.0f;
+    bool isBoosting = false;
+
+    float playerDirection;
+
 protected:
     class GameManager* game;
 
@@ -52,6 +61,7 @@ public:
     bool OnCreate();
     void Render( float scale = 1.0f );
     void HandleEvents( const SDL_Event& event );
+    void shipMove(float deltaTime);
     void Update( float deltaTime );
     void setTexture( SDL_Texture* texture_ ) { texture = texture_; }
     

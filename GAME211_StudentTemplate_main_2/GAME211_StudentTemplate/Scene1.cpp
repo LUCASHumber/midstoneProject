@@ -24,15 +24,25 @@ bool Scene1::OnCreate() {
 	/// Turn on the SDL imaging subsystem
 	IMG_Init(IMG_INIT_PNG);
 
-	// Set player image to PacMan
+	// Set player image to spaceship
 
 	SDL_Surface* image;
 	SDL_Texture* texture;
 
-	image = IMG_Load("pacman.png");
+	image = IMG_Load("Spaceship.png");
 	texture = SDL_CreateTextureFromSurface(renderer, image);
 	game->getPlayer()->setImage(image);
 	game->getPlayer()->setTexture(texture);
+
+	//dont know how to get screen h and w
+	game->getPlayer()->setPos(Vec3(25/2,15/2,0));
+
+	
+
+	if (!game->getPlayer()->OnCreate()) {
+		return false;
+	}
+	
 
 	return true;
 }
@@ -51,12 +61,16 @@ void Scene1::Render() {
 
 	// render the player
 	game->RenderPlayer(0.10f);
+	
 
 	SDL_RenderPresent(renderer);
+	
 }
 
 void Scene1::HandleEvents(const SDL_Event& event)
 {
 	// send events to player as needed
 	game->getPlayer()->HandleEvents(event);
+
+	
 }
