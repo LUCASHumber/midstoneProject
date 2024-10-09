@@ -37,6 +37,8 @@ bool Scene1::OnCreate() {
 	//dont know how to get screen h and w
 	game->getPlayer()->setPos(Vec3(25/2,15/2,0));
 
+	
+
 	if (!game->getPlayer()->OnCreate()) {
 		return false;
 	}

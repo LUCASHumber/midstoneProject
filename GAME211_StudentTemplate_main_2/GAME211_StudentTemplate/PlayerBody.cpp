@@ -47,9 +47,13 @@ void PlayerBody::Render( float scale )
     square.h = static_cast<int>(h);
 
     // Convert character orientation from radians to degrees.
-    float orientationDegrees = orientation * 180.0f / M_PI ;
+    // did not work, caused player orientation to not rotate
+    //float orientationDegrees = orientation * 180.0f / M_PI ;
+   
     
-
+    //made new variable playerDirection to rotate player image(replaces orientationDegree) 
+    //render player ship at + 90 radians to make image match orientation
+    //does not convert radians to degrees
     SDL_RenderCopyEx( renderer, texture, nullptr, &square,
         playerDirection + 90, nullptr, SDL_FLIP_NONE);
 
@@ -100,11 +104,12 @@ void PlayerBody::shipMove(float deltaTime) {
     float radiusAngle = -playerDirection * M_PI / 180.0F;
     if (isBoosting) {
 
-        float impulse = 30.0f;
+        float impulse = 50.0f;
         vel.x = cos(radiusAngle) * impulse * deltaTime;
         vel.y = sin(radiusAngle) * impulse * deltaTime;
     }
     float dampeningForce = 0.98f;
+
     vel *= dampeningForce;
   
 
@@ -132,9 +137,10 @@ void PlayerBody::Update( float deltaTime )
     // Update position, call Update from base class
     // Note that would update velocity too, and rotation motion
 
-
+    //calls shipMove
     shipMove(deltaTime);
 
+    //prints playerAngle playerDirection and x y for debugging
     cout << playerAngle << endl;
     cout << playerDirection << endl;
     cout << pos.x << " " << pos.y << endl;
