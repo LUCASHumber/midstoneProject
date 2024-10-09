@@ -45,3 +45,5 @@ void Projectile::Render(float scale)
 void Projectile::Update(float deltaTime)
 {
 }
+
+//poo
