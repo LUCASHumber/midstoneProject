@@ -67,7 +67,7 @@ void PlayerBody::HandleEvents( const SDL_Event& event ){
     if (event.type == SDL_KEYDOWN && event.key.repeat == 0){
         switch (event.key.keysym.scancode) {
         case SDL_SCANCODE_A: //will rotate 90 degrees left
-            playerAngle += -90.0f;
+            playerAngle -= 90.0f;
             break;
         case SDL_SCANCODE_D: //will rotate 90 degrees right
             playerAngle += 90.0f;
@@ -75,7 +75,9 @@ void PlayerBody::HandleEvents( const SDL_Event& event ){
         case SDL_SCANCODE_W:
             isBoosting = true;
             break;
-
+        case SDL_SCANCODE_SPACE:
+            isShooting = true;
+            break;
         }
     }
     //User release A or D
@@ -89,6 +91,9 @@ void PlayerBody::HandleEvents( const SDL_Event& event ){
             break;
         case SDL_SCANCODE_W:
             isBoosting = false;
+            break;
+        case SDL_SCANCODE_SPACE:
+            isShooting = false;
             break;
         }
     }
@@ -130,6 +135,33 @@ void PlayerBody::shipMove(float deltaTime) {
         pos.y = 15.0f; // Reset to bottom boundary
     }
 
+    if (isShooting) {
+        ShootProjectile();
+        isShooting = false; // Ensure we only shoot once per press
+    }
+
+}
+
+void PlayerBody::ShootProjectile()
+{
+    Projectile* projectile = game->getShot(); // Assuming getShot() returns a projectile object
+
+    if (!projectile) {
+        std::cerr << "Projectile could not be created!" << std::endl;
+        return;
+    }
+
+    float shotSpeed = 100.0f; // Set the speed of the projectile
+    float angleInRadians = -playerDirection * M_PI / 180.0f;
+
+    // Set initial position and velocity of the projectile based on player direction
+    projectile->setPos(pos); // Position same as the ship
+    Vec3 projectileVelocity;
+    projectileVelocity.x = cos(angleInRadians) * shotSpeed;
+    projectileVelocity.y = sin(angleInRadians) * shotSpeed;
+
+    projectile->setVel(projectileVelocity); // Apply velocity
+    projectile->OnCreate(); // Create the projectile
 }
 
 void PlayerBody::Update( float deltaTime )
@@ -139,6 +171,7 @@ void PlayerBody::Update( float deltaTime )
 
     //calls shipMove
     shipMove(deltaTime);
+    
 
     //prints playerAngle playerDirection and x y for debugging
     cout << playerAngle << endl;

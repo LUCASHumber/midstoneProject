@@ -7,6 +7,7 @@ GameManager::GameManager() {
 	isRunning = true;
 	currentScene = nullptr;
     player = nullptr;
+    shot = nullptr;
 }
 
 bool GameManager::OnCreate() {
@@ -61,6 +62,23 @@ bool GameManager::OnCreate() {
         this
     );
     if ( player->OnCreate() == false ) {
+        OnDestroy();
+        return false;
+    }
+
+    shot = new Projectile
+    (
+        position,
+        velocity,
+        acceleration,
+        mass,
+        radius,
+        orientation,
+        rotation,
+        angular,
+        this
+    );
+    if (shot->OnCreate() == false) {
         OnDestroy();
         return false;
     }

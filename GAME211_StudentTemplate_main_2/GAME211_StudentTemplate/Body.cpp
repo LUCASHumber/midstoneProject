@@ -72,4 +72,11 @@ void Body::setPos( Vec3 pos_ )
 {
     pos = pos_;
 }
+
+void Body::setVel( Vec3 vel_ )
+{
+    vel = vel_;
+}
+
+
 // beastars is the best anime

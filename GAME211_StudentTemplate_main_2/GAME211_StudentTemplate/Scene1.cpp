@@ -25,19 +25,28 @@ bool Scene1::OnCreate() {
 	IMG_Init(IMG_INIT_PNG);
 
 	// Set player image to spaceship
+	SDL_Surface* Playerimage;
+	SDL_Texture* Playertexture;
+	Playerimage = IMG_Load("Spaceship.png");
+	Playertexture = SDL_CreateTextureFromSurface(renderer, Playerimage);
+	game->getPlayer()->setImage(Playerimage);
+	game->getPlayer()->setTexture(Playertexture);
 
-	SDL_Surface* image;
-	SDL_Texture* texture;
-
-	image = IMG_Load("Spaceship.png");
-	texture = SDL_CreateTextureFromSurface(renderer, image);
-	game->getPlayer()->setImage(image);
-	game->getPlayer()->setTexture(texture);
+	////set image of projectile
+	//SDL_Surface* shotimage;
+	//SDL_Texture* shottexture;
+	//shotimage = IMG_Load("Spaceship.png");
+	//shottexture = SDL_CreateTextureFromSurface(renderer, shotimage);
+	//game->getShot()->setImage(shotimage);
+	//game->getShot()->setTexture(shottexture);
 
 	//dont know how to get screen h and w
 	game->getPlayer()->setPos(Vec3(25/2,15/2,0));
 
-	
+	if (game == nullptr) {
+		std::cerr << "Game Manager is not initialized!" << std::endl;
+		return false;
+	}
 
 	if (!game->getPlayer()->OnCreate()) {
 		return false;
@@ -53,6 +62,7 @@ void Scene1::Update(const float deltaTime) {
 
 	// Update player
 	game->getPlayer()->Update(deltaTime);
+	game->getShot()->Update(deltaTime);
 }
 
 void Scene1::Render() {
@@ -61,7 +71,7 @@ void Scene1::Render() {
 
 	// render the player
 	game->RenderPlayer(0.10f);
-	
+	//game->RenderShot(0.10f);
 
 	SDL_RenderPresent(renderer);
 	
@@ -71,6 +81,6 @@ void Scene1::HandleEvents(const SDL_Event& event)
 {
 	// send events to player as needed
 	game->getPlayer()->HandleEvents(event);
-
+	//game->getShot()->HandleEvents(event);
 	
 }

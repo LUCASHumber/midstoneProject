@@ -2,7 +2,7 @@
 
 bool Projectile::OnCreate()
 {
-	image = IMG_Load("Projectile_Basic.png");
+	image = IMG_Load( "Projectile_Basic.png" );
 	SDL_Renderer* renderer = game->getRenderer();
 	texture = SDL_CreateTextureFromSurface(renderer, image);
 	if (image == nullptr) {
@@ -40,10 +40,15 @@ void Projectile::Render(float scale)
     square.w = static_cast<int>(w);
     square.h = static_cast<int>(h);
 
+    SDL_RenderCopyEx(renderer, texture, nullptr, &square,
+        PlayerBody().playerDirection + 90, nullptr, SDL_FLIP_NONE);
+   
 }
 
 void Projectile::Update(float deltaTime)
 {
+    pos += vel * deltaTime;
+
 }
 
-//poo
+//
