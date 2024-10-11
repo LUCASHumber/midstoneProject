@@ -24,6 +24,16 @@ bool Scene1::OnCreate() {
 	/// Turn on the SDL imaging subsystem
 	IMG_Init(IMG_INIT_PNG);
 
+	// set the background
+	SDL_Surface* background;
+	SDL_Texture* backgroundTexture;
+	// i am pretty sure this is not the best way of doing it 
+	background = IMG_Load("Space.png");
+	backgroundTexture = SDL_CreateTextureFromSurface(renderer, background);
+	SDL_FreeSurface(background);
+	
+	//SDL_RenderCopy(screenRenderer, backgroundTexture, nullptr, nullptr);
+
 	// Set player image to spaceship
 
 	SDL_Surface* image;
