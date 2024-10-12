@@ -63,6 +63,7 @@ void Scene1::Update(const float deltaTime) {
 	// Update player
 	game->getPlayer()->Update(deltaTime);
 
+	//update shot
 	if (game->getShots()->getActive()) {
 		game->getShots()->Update(deltaTime);
 	}

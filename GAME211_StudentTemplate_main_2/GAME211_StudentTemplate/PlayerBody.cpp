@@ -109,7 +109,7 @@ void PlayerBody::shipMove(float deltaTime) {
     radiusAngle = -playerDirection * M_PI / 180.0F;
     if (isBoosting) {
 
-        impulse = 50.0f;
+        impulse = 10.0f;
         vel.x = cos(radiusAngle) * impulse * deltaTime;
         vel.y = sin(radiusAngle) * impulse * deltaTime;
     }
@@ -171,7 +171,7 @@ void PlayerBody::ShootProjectile(float deltaTime)
     radiusAngle = playerDirection * M_PI / 180.0F;
     if (isShooting) {
 
-        impulse = 50.0f;
+        impulse = 60.0f;
         vel.x = cos(radiusAngle) * -impulse * deltaTime;
         vel.y = sin(radiusAngle) * impulse * deltaTime;
     }
