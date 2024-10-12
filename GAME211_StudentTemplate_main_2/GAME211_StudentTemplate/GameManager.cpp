@@ -7,7 +7,7 @@ GameManager::GameManager() {
 	isRunning = true;
 	currentScene = nullptr;
     player = nullptr;
-    shot = nullptr;
+    shots = nullptr;
 }
 
 bool GameManager::OnCreate() {
@@ -61,12 +61,8 @@ bool GameManager::OnCreate() {
         angular,
         this
     );
-    if ( player->OnCreate() == false ) {
-        OnDestroy();
-        return false;
-    }
 
-    shot = new Projectile
+    shots = new Projectile
     (
         position,
         velocity,
@@ -78,10 +74,17 @@ bool GameManager::OnCreate() {
         angular,
         this
     );
-    if (shot->OnCreate() == false) {
+
+    if ( player->OnCreate() == false ) {
         OnDestroy();
         return false;
     }
+
+    if (shots->OnCreate() == false) {
+        OnDestroy();
+        return false;
+    }
+
 
     // need to create Player before validating scene
     if (!ValidateCurrentScene()) {
@@ -104,6 +107,8 @@ void GameManager::Run() {
 		timer->UpdateFrameTicks();
         currentScene->Update(timer->GetDeltaTime());
 		currentScene->Render();
+
+       
 
 		/// Keep the event loop running at a proper rate
 		SDL_Delay(timer->GetSleepTime(60)); ///60 frames per sec
@@ -178,15 +183,18 @@ SDL_Renderer* GameManager::getRenderer()
     return renderer;
 }
 
+
 // This might be unfamiliar
 void GameManager::RenderPlayer(float scale)
 {
     player->Render(scale);
 }
+
 void GameManager::RenderShot(float scale)
 {
-    shot->Render(scale);
+    shots->Render(scale);
 }
+
 
 
 void GameManager::LoadScene( int i )

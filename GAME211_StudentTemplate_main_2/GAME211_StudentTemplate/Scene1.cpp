@@ -32,14 +32,7 @@ bool Scene1::OnCreate() {
 	game->getPlayer()->setImage(Playerimage);
 	game->getPlayer()->setTexture(Playertexture);
 
-	////set image of projectile
-	//SDL_Surface* shotimage;
-	//SDL_Texture* shottexture;
-	//shotimage = IMG_Load("Spaceship.png");
-	//shottexture = SDL_CreateTextureFromSurface(renderer, shotimage);
-	//game->getShot()->setImage(shotimage);
-	//game->getShot()->setTexture(shottexture);
-
+	
 	//dont know how to get screen h and w
 	game->getPlayer()->setPos(Vec3(25/2,15/2,0));
 
@@ -56,13 +49,25 @@ bool Scene1::OnCreate() {
 	return true;
 }
 
-void Scene1::OnDestroy() {}
+void Scene1::OnDestroy() {
+
+	Projectile* projectiles = new Projectile();
+	if (projectiles != nullptr) {
+		projectiles->OnDestroy();  // Free the resources when the scene is destroyed
+	}
+
+}
 
 void Scene1::Update(const float deltaTime) {
 
 	// Update player
 	game->getPlayer()->Update(deltaTime);
-	game->getShot()->Update(deltaTime);
+
+	if (game->getShots()->getActive()) {
+		game->getShots()->Update(deltaTime);
+	}
+
+	
 }
 
 void Scene1::Render() {
@@ -71,7 +76,10 @@ void Scene1::Render() {
 
 	// render the player
 	game->RenderPlayer(0.10f);
-	//game->RenderShot(0.10f);
+
+	if (game->getShots()->getActive()) {
+		game->RenderShot(0.05f);  // Adjust scale if needed for projectile image
+	}
 
 	SDL_RenderPresent(renderer);
 	
@@ -81,6 +89,5 @@ void Scene1::HandleEvents(const SDL_Event& event)
 {
 	// send events to player as needed
 	game->getPlayer()->HandleEvents(event);
-	//game->getShot()->HandleEvents(event);
 	
 }

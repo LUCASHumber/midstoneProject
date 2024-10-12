@@ -106,10 +106,10 @@ void PlayerBody::shipMove(float deltaTime) {
     playerDirection = fmod(playerDirection, 360.0f);
 
 
-    float radiusAngle = -playerDirection * M_PI / 180.0F;
+    radiusAngle = -playerDirection * M_PI / 180.0F;
     if (isBoosting) {
 
-        float impulse = 50.0f;
+        impulse = 50.0f;
         vel.x = cos(radiusAngle) * impulse * deltaTime;
         vel.y = sin(radiusAngle) * impulse * deltaTime;
     }
@@ -136,33 +136,48 @@ void PlayerBody::shipMove(float deltaTime) {
     }
 
     if (isShooting) {
-        ShootProjectile();
+        ShootProjectile(deltaTime);
         isShooting = false; // Ensure we only shoot once per press
     }
 
 }
 
-void PlayerBody::ShootProjectile()
+void PlayerBody::ShootProjectile(float deltaTime)
 {
-    Projectile* projectile = game->getShot(); // Assuming getShot() returns a projectile object
+    Projectile* projectiles = game->getShots(); // Assuming getShot() returns a projectile object
 
-    if (!projectile) {
+    if (!projectiles) {
         std::cerr << "Projectile could not be created!" << std::endl;
         return;
     }
 
-    float shotSpeed = 100.0f; // Set the speed of the projectile
+    projectiles->setActive(true);
+
+    float shotSpeed = 10.0f; // Set the speed of the projectile
     float angleInRadians = -playerDirection * M_PI / 180.0f;
 
     // Set initial position and velocity of the projectile based on player direction
-    projectile->setPos(pos); // Position same as the ship
+    
     Vec3 projectileVelocity;
     projectileVelocity.x = cos(angleInRadians) * shotSpeed;
     projectileVelocity.y = sin(angleInRadians) * shotSpeed;
 
-    projectile->setVel(projectileVelocity); // Apply velocity
-    projectile->OnCreate(); // Create the projectile
+    projectiles->setPos(pos); // Position same as the ship
+    projectiles->setVel(projectileVelocity); // Apply velocity
+    projectiles->setActive(true);
+    projectiles->OnCreate(); // Create the projectile
+
+
+    radiusAngle = playerDirection * M_PI / 180.0F;
+    if (isShooting) {
+
+        impulse = 50.0f;
+        vel.x = cos(radiusAngle) * -impulse * deltaTime;
+        vel.y = sin(radiusAngle) * impulse * deltaTime;
+    }
 }
+
+
 
 void PlayerBody::Update( float deltaTime )
 {
