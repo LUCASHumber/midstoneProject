@@ -67,7 +67,7 @@ void PlayerBody::HandleEvents( const SDL_Event& event ){
     if (event.type == SDL_KEYDOWN && event.key.repeat == 0){
         switch (event.key.keysym.scancode) {
         case SDL_SCANCODE_A: //will rotate 90 degrees left
-            playerAngle += -90.0f;
+            playerAngle -= 90.0f;
             break;
         case SDL_SCANCODE_D: //will rotate 90 degrees right
             playerAngle += 90.0f;
@@ -75,7 +75,9 @@ void PlayerBody::HandleEvents( const SDL_Event& event ){
         case SDL_SCANCODE_W:
             isBoosting = true;
             break;
-
+        case SDL_SCANCODE_SPACE:
+            isShooting = true;
+            break;
         }
     }
     //User release A or D
@@ -90,6 +92,9 @@ void PlayerBody::HandleEvents( const SDL_Event& event ){
         case SDL_SCANCODE_W:
             isBoosting = false;
             break;
+        case SDL_SCANCODE_SPACE:
+            isShooting = false;
+            break;
         }
     }
 
@@ -101,10 +106,10 @@ void PlayerBody::shipMove(float deltaTime) {
     playerDirection = fmod(playerDirection, 360.0f);
 
 
-    float radiusAngle = -playerDirection * M_PI / 180.0F;
+    radiusAngle = -playerDirection * M_PI / 180.0F;
     if (isBoosting) {
 
-        float impulse = 50.0f;
+        impulse = 50.0f;
         vel.x = cos(radiusAngle) * impulse * deltaTime;
         vel.y = sin(radiusAngle) * impulse * deltaTime;
     }
@@ -130,7 +135,49 @@ void PlayerBody::shipMove(float deltaTime) {
         pos.y = 15.0f; // Reset to bottom boundary
     }
 
+    if (isShooting) {
+        ShootProjectile(deltaTime);
+        isShooting = false; // Ensure we only shoot once per press
+    }
+
 }
+
+void PlayerBody::ShootProjectile(float deltaTime)
+{
+    Projectile* projectiles = game->getShots(); // Assuming getShot() returns a projectile object
+
+    if (!projectiles) {
+        std::cerr << "Projectile could not be created!" << std::endl;
+        return;
+    }
+
+    projectiles->setActive(true);
+
+    float shotSpeed = 10.0f; // Set the speed of the projectile
+    float angleInRadians = -playerDirection * M_PI / 180.0f;
+
+    // Set initial position and velocity of the projectile based on player direction
+    
+    Vec3 projectileVelocity;
+    projectileVelocity.x = cos(angleInRadians) * shotSpeed;
+    projectileVelocity.y = sin(angleInRadians) * shotSpeed;
+
+    projectiles->setPos(pos); // Position same as the ship
+    projectiles->setVel(projectileVelocity); // Apply velocity
+    projectiles->setActive(true);
+    projectiles->OnCreate(); // Create the projectile
+
+
+    radiusAngle = playerDirection * M_PI / 180.0F;
+    if (isShooting) {
+
+        impulse = 50.0f;
+        vel.x = cos(radiusAngle) * -impulse * deltaTime;
+        vel.y = sin(radiusAngle) * impulse * deltaTime;
+    }
+}
+
+
 
 void PlayerBody::Update( float deltaTime )
 {
@@ -139,6 +186,7 @@ void PlayerBody::Update( float deltaTime )
 
     //calls shipMove
     shipMove(deltaTime);
+    
 
     //prints playerAngle playerDirection and x y for debugging
     cout << playerAngle << endl;

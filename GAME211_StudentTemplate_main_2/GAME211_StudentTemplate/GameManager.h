@@ -2,12 +2,14 @@
 #define GAMEMANAGER_H
 #include <SDL.h>
 #include <iostream>
+#include <vector>
 #include "Window.h"
 #include "Timer.h"
 #include "Scene.h"
 #include "PlayerBody.h"
 #include "Projectile.h"
 
+using namespace std;
 
 class GameManager {
 private:
@@ -27,7 +29,7 @@ private:
 
 	// This might be unfamiliar
     class PlayerBody *player;
-	class Projectile *shot;
+	class Projectile* shots;
 
 	void handleEvents();
 	void LoadScene(int i);
@@ -46,7 +48,7 @@ public:
 	float getSceneWidth();
 	Matrix4 getProjectionMatrix();
     PlayerBody* getPlayer(){ return player; }
-	Projectile* getShot() { return shot; }
+	Projectile* getShots() { return shots; }
 	void RenderPlayer(float scale = 1.0f);
 	void RenderShot(float scale = 1.0f);
 	SDL_Renderer* getRenderer();

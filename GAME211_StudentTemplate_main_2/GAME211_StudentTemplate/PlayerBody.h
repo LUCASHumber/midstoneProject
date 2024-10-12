@@ -18,11 +18,15 @@ class PlayerBody : public Body
 {
     float playerAngle = 0.0f;
     bool isRotating = false;
+
     float boostSpeed = 100.0f;
     bool isBoosting = false;
 
-    float playerDirection;
+    bool isShooting = false;
 
+    float impulse = 50.0f;
+
+   
 protected:
     class GameManager* game;
 
@@ -55,6 +59,9 @@ public:
     }
         , game{ game_ }
     {}
+    float playerDirection;//this is here to make sure that projectile class gets access to playerDirection in order the rotate
+    float radiusAngle = 0.0f;
+   
     
     // use the base class versions of getters
 
@@ -62,6 +69,7 @@ public:
     void Render( float scale = 1.0f );
     void HandleEvents( const SDL_Event& event );
     void shipMove(float deltaTime);
+    void ShootProjectile(float deltaTime);
     void Update( float deltaTime );
     void setTexture( SDL_Texture* texture_ ) { texture = texture_; }
     

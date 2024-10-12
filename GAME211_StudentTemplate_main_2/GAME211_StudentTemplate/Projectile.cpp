@@ -2,7 +2,7 @@
 
 bool Projectile::OnCreate()
 {
-	image = IMG_Load("Projectile_Basic.png");
+	image = IMG_Load( "Projectile_Basic.png" );
 	SDL_Renderer* renderer = game->getRenderer();
 	texture = SDL_CreateTextureFromSurface(renderer, image);
 	if (image == nullptr) {
@@ -15,6 +15,10 @@ bool Projectile::OnCreate()
 
 void Projectile::Render(float scale)
 {
+    if (!isActive) {
+        return;
+    }
+
     // This is why we need game in the constructor, to get the renderer, etc.
     SDL_Renderer* renderer = game->getRenderer();
     Matrix4 projectionMatrix = game->getProjectionMatrix();
@@ -40,8 +44,28 @@ void Projectile::Render(float scale)
     square.w = static_cast<int>(w);
     square.h = static_cast<int>(h);
 
+    SDL_RenderCopyEx(renderer, texture, nullptr, &square,
+        game->getPlayer()->playerDirection, nullptr, SDL_FLIP_NONE);
+   
 }
 
 void Projectile::Update(float deltaTime)
 {
+    pos += vel * deltaTime;
+   
+    if (pos.x < 0 || pos.x > 25.0f || pos.y < 0 || pos.y > 15.0f) {
+        OnDestroy();  // Call the destroy method when the projectile leaves the screen
+      
+    }
+
 }
+
+void Projectile::OnDestroy()
+{
+    isActive = false;
+   
+    std::cout << "Projectile destroyed!" << std::endl;
+
+}
+
+//

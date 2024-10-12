@@ -11,6 +11,8 @@
 class Projectile : public Body
 {
 
+    bool isActive = false;
+
 protected:
     class GameManager* game;
 
@@ -43,7 +45,10 @@ public:
 	bool OnCreate();
 	void Render(float scale = 1.0f);
 	void Update(float deltaTime);
+    void OnDestroy();
 	void setTexture(SDL_Texture* texture_) { texture = texture_; }
+    void setActive(bool active) { isActive = active; }
+    bool getActive() const { return isActive; }
 };
 
 #endif
