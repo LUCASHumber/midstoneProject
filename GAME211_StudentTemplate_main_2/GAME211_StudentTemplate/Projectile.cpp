@@ -62,10 +62,13 @@ void Projectile::Update(float deltaTime)
 
 void Projectile::OnDestroy()
 {
-    isActive = false;
    
-    std::cout << "Projectile destroyed!" << std::endl;
+    isActive = false;
 
+    std::cout << "Projectile destroyed!" << std::endl;
+    SDL_FreeSurface(image);
+    SDL_DestroyTexture(texture);
+   
 }
 
 //

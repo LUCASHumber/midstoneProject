@@ -24,6 +24,7 @@ class PlayerBody : public Body
 
     bool isShooting = false;
 
+    float boost = 10.0f;
     float impulse = 50.0f;
 
    
