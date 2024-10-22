@@ -54,7 +54,16 @@ void Scene1::OnDestroy() {
 	Projectile* projectiles = new Projectile();
 	if (projectiles != nullptr) {
 		projectiles->OnDestroy();  // Free the resources when the scene is destroyed
+		delete projectiles;
+		
 	}
+
+	if (game->getPlayer() != nullptr) {
+		game->getPlayer()->OnDestroy(); // Call the player's OnDestroy method to free player resources
+	}
+
+	// Clean up SDL image subsystem if you are done using it
+	IMG_Quit();
 
 }
 

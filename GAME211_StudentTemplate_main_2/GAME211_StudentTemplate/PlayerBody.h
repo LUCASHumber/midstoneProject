@@ -72,6 +72,7 @@ public:
     void shipMove(float deltaTime);
     void ShootProjectile(float deltaTime);
     void Update( float deltaTime );
+    void OnDestroy();
     void setTexture( SDL_Texture* texture_ ) { texture = texture_; }
     
 };
