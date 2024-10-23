@@ -167,6 +167,7 @@ void PlayerBody::ShootProjectile(float deltaTime)
     projectiles->setVel(projectileVelocity); // Apply velocity
     projectiles->setActive(true);
     projectiles->OnCreate(); // Create the projectile
+   
 
     //make projectile face same direction as player
     radiusAngle = playerDirection * M_PI / 180.0F;
