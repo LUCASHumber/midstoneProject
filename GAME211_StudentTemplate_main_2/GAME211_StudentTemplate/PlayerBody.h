@@ -24,6 +24,7 @@ class PlayerBody : public Body
 
     bool isShooting = false;
 
+    float boost = 10.0f;
     float impulse = 50.0f;
 
    
@@ -71,6 +72,7 @@ public:
     void shipMove(float deltaTime);
     void ShootProjectile(float deltaTime);
     void Update( float deltaTime );
+    void OnDestroy();
     void setTexture( SDL_Texture* texture_ ) { texture = texture_; }
     
 };

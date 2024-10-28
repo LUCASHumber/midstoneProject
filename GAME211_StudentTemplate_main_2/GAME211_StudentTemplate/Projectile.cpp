@@ -15,9 +15,9 @@ bool Projectile::OnCreate()
 
 void Projectile::Render(float scale)
 {
-    if (!isActive) {
+    /*if (!isActive) {
         return;
-    }
+    }*/
 
     // This is why we need game in the constructor, to get the renderer, etc.
     SDL_Renderer* renderer = game->getRenderer();
@@ -62,10 +62,13 @@ void Projectile::Update(float deltaTime)
 
 void Projectile::OnDestroy()
 {
-    isActive = false;
    
-    std::cout << "Projectile destroyed!" << std::endl;
+    isActive = false;
 
+    std::cout << "Projectile destroyed!" << std::endl;
+    SDL_FreeSurface(image);
+    SDL_DestroyTexture(texture);
+   
 }
 
 //

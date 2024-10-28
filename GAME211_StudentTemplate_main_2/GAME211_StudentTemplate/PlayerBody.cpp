@@ -102,22 +102,23 @@ void PlayerBody::HandleEvents( const SDL_Event& event ){
 
 void PlayerBody::shipMove(float deltaTime) {
    
+    //have player input change direction
     playerDirection += playerAngle * deltaTime;
     playerDirection = fmod(playerDirection, 360.0f);
 
-
+    //make player move in direction its facing
     radiusAngle = -playerDirection * M_PI / 180.0F;
     if (isBoosting) {
 
-        impulse = 10.0f;
-        vel.x = cos(radiusAngle) * impulse * deltaTime;
-        vel.y = sin(radiusAngle) * impulse * deltaTime;
+        boost = 10.0f;
+        vel.x = cos(radiusAngle) * boost * deltaTime;
+        vel.y = sin(radiusAngle) * boost * deltaTime;
     }
     float dampeningForce = 0.98f;
 
     vel *= dampeningForce;
   
-
+    //update pos with vel
     pos.x += vel.x * deltaTime;
     pos.y += vel.y * deltaTime;
 
@@ -166,8 +167,9 @@ void PlayerBody::ShootProjectile(float deltaTime)
     projectiles->setVel(projectileVelocity); // Apply velocity
     projectiles->setActive(true);
     projectiles->OnCreate(); // Create the projectile
+   
 
-
+    //make projectile face same direction as player
     radiusAngle = playerDirection * M_PI / 180.0F;
     if (isShooting) {
 
@@ -195,5 +197,11 @@ void PlayerBody::Update( float deltaTime )
 
     Body::Update(deltaTime);
 
+}
+
+void PlayerBody::OnDestroy()
+{
+    SDL_FreeSurface(image);
+    SDL_DestroyTexture(texture);
 }
 

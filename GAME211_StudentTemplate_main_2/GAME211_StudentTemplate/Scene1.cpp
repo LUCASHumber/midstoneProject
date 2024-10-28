@@ -24,13 +24,14 @@ bool Scene1::OnCreate() {
 	/// Turn on the SDL imaging subsystem
 	IMG_Init(IMG_INIT_PNG);
 
+	player = new PlayerBody();
 	// Set player image to spaceship
-	SDL_Surface* Playerimage;
+	/*SDL_Surface* Playerimage;
 	SDL_Texture* Playertexture;
 	Playerimage = IMG_Load("Spaceship.png");
 	Playertexture = SDL_CreateTextureFromSurface(renderer, Playerimage);
 	game->getPlayer()->setImage(Playerimage);
-	game->getPlayer()->setTexture(Playertexture);
+	game->getPlayer()->setTexture(Playertexture);*/
 
 	
 	//dont know how to get screen h and w
@@ -51,10 +52,20 @@ bool Scene1::OnCreate() {
 
 void Scene1::OnDestroy() {
 
-	Projectile* projectiles = new Projectile();
+	projectiles = new Projectile();
 	if (projectiles != nullptr) {
 		projectiles->OnDestroy();  // Free the resources when the scene is destroyed
+		delete projectiles;
+		
 	}
+
+	if (player != nullptr) {
+		player->OnDestroy(); // Call the player's OnDestroy method to free player resources
+		delete player;
+	}
+
+	// Clean up SDL image subsystem if you are done using it
+	IMG_Quit();
 
 }
 
