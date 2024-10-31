@@ -58,6 +58,8 @@ void Projectile::Update(float deltaTime)
       
     }
 
+
+
 }
 
 void Projectile::OnDestroy()

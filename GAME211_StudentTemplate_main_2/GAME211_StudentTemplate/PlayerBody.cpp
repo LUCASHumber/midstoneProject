@@ -145,14 +145,15 @@ void PlayerBody::shipMove(float deltaTime) {
 
 void PlayerBody::ShootProjectile(float deltaTime)
 {
-    Projectile* projectiles = game->getShots(); // Assuming getShot() returns a projectile object
+    Projectile* newProjectiles = new Projectile(); // Assuming getShot() returns a projectile object
 
-    if (!projectiles) {
+    if (!newProjectiles->OnCreate()) {
         std::cerr << "Projectile could not be created!" << std::endl;
+        delete newProjectiles;
         return;
     }
 
-    projectiles->setActive(true);
+    newProjectiles->setActive(true);
 
     float shotSpeed = 10.0f; // Set the speed of the projectile
     float angleInRadians = -playerDirection * M_PI / 180.0f;
@@ -163,10 +164,12 @@ void PlayerBody::ShootProjectile(float deltaTime)
     projectileVelocity.x = cos(angleInRadians) * shotSpeed;
     projectileVelocity.y = sin(angleInRadians) * shotSpeed;
 
-    projectiles->setPos(pos); // Position same as the ship
-    projectiles->setVel(projectileVelocity); // Apply velocity
-    projectiles->setActive(true);
-    projectiles->OnCreate(); // Create the projectile
+    newProjectiles->setPos(pos); // Position same as the ship
+    newProjectiles->setVel(projectileVelocity); // Apply velocity
+    newProjectiles->setActive(true);
+   // projectiles->OnCreate(); // Create the projectile
+
+    game->getShots().push_back(newProjectiles);
    
 
     //make projectile face same direction as player

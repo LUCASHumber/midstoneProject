@@ -37,6 +37,8 @@ bool Scene1::OnCreate() {
 	//dont know how to get screen h and w
 	game->getPlayer()->setPos(Vec3(25/2,15/2,0));
 
+	
+
 	if (game == nullptr) {
 		std::cerr << "Game Manager is not initialized!" << std::endl;
 		return false;
@@ -53,6 +55,7 @@ bool Scene1::OnCreate() {
 void Scene1::OnDestroy() {
 
 	projectiles = new Projectile();
+
 	if (projectiles != nullptr) {
 		projectiles->OnDestroy();  // Free the resources when the scene is destroyed
 		delete projectiles;
@@ -75,10 +78,22 @@ void Scene1::Update(const float deltaTime) {
 	game->getPlayer()->Update(deltaTime);
 
 	//update shot
-	if (game->getShots()->getActive()) {
+	/*if (game->getShots()->getActive()) {
 		game->getShots()->Update(deltaTime);
+	}*/
+	auto& shots = game->getShots();
+	for (auto it = shots.begin(); it != shots.end();) {
+		Projectile* projectile = *it;
+		projectile->Update(deltaTime);
+		if (projectile->getActive() == false) {
+			projectile->OnDestroy();
+			delete projectile;
+			it = shots.erase(it);
+		}
+		else {
+			++it;
+		}
 	}
-
 	
 }
 
@@ -89,8 +104,10 @@ void Scene1::Render() {
 	// render the player
 	game->RenderPlayer(0.10f);
 
-	if (game->getShots()->getActive()) {
-		game->RenderShot(0.05f);  // Adjust scale if needed for projectile image
+	// Render each projectile
+	auto& shots = game->getShots();
+	for (Projectile* projectile : shots) {
+		projectile->Render(0.05f); // Adjust scale as needed
 	}
 
 	SDL_RenderPresent(renderer);

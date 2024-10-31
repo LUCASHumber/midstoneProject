@@ -7,7 +7,7 @@ GameManager::GameManager() {
 	isRunning = true;
 	currentScene = nullptr;
     player = nullptr;
-    shots = nullptr;
+    
 }
 
 bool GameManager::OnCreate() {
@@ -61,8 +61,8 @@ bool GameManager::OnCreate() {
         angular,
         this
     );
-
-    shots = new Projectile
+    
+    Projectile* Mshots = new Projectile
     (
         position,
         velocity,
@@ -74,15 +74,18 @@ bool GameManager::OnCreate() {
         angular,
         this
     );
+    shots.push_back(Mshots);
 
     if ( player->OnCreate() == false ) {
         OnDestroy();
         return false;
     }
 
-    if (shots->OnCreate() == false) {
-        OnDestroy();
-        return false;
+    for (auto* shot : shots) {
+        if (!shot->OnCreate()) {
+            OnDestroy();
+            return false;
+        }
     }
 
 
@@ -156,12 +159,16 @@ void GameManager::handleEvents()
     }
 }
 
-GameManager::~GameManager() {}
+GameManager::~GameManager() {
+    OnDestroy();
+}
 
 void GameManager::OnDestroy(){
 	if (windowPtr) delete windowPtr;
 	if (timer) delete timer;
 	if (currentScene) delete currentScene;
+    if (player) delete player;
+    CleanupProjectiles();
 }
 
 // This might be unfamiliar
@@ -190,9 +197,21 @@ void GameManager::RenderPlayer(float scale)
     player->Render(scale);
 }
 
-void GameManager::RenderShot(float scale)
+void GameManager::RenderShots(float scale)
 {
-    shots->Render(scale);
+    for (auto* shot : shots) {
+        shot->Render(scale);
+    }
+}
+
+void GameManager::CleanupProjectiles()
+{
+    for (Projectile* projectile : shots) {
+        projectile->OnDestroy();
+        delete projectile;
+    }
+    shots.clear();
+
 }
 
 
