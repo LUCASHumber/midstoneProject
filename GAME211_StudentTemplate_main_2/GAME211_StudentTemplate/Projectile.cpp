@@ -3,6 +3,11 @@
 bool Projectile::OnCreate()
 {
 	image = IMG_Load( "Projectile_Basic.png" );
+    if (image == nullptr) {
+        std::cerr << "Can't open the image" << std::endl;
+        return false;
+    }
+
 	SDL_Renderer* renderer = game->getRenderer();
 	texture = SDL_CreateTextureFromSurface(renderer, image);
 	if (image == nullptr) {
@@ -15,9 +20,9 @@ bool Projectile::OnCreate()
 
 void Projectile::Render(float scale)
 {
-    /*if (!isActive) {
+    if (!isActive) {
         return;
-    }*/
+    }
 
     // This is why we need game in the constructor, to get the renderer, etc.
     SDL_Renderer* renderer = game->getRenderer();
@@ -30,6 +35,12 @@ void Projectile::Render(float scale)
 
     // convert the position from game coords to screen coords.
     screenCoords = projectionMatrix * pos;
+
+    if (screenCoords.x < 0 || screenCoords.y < 0 ||
+        screenCoords.x > game->getSceneWidth() ||
+        screenCoords.y > game->getSceneHeight()) {
+        return; // Skip if out of bounds
+    }
 
     // Scale the image, in case the .png file is too big or small
     w = image->w * scale;
@@ -44,8 +55,10 @@ void Projectile::Render(float scale)
     square.w = static_cast<int>(w);
     square.h = static_cast<int>(h);
 
+    float orientationDegrees = orientation * 180.0f / M_PI;
+
     SDL_RenderCopyEx(renderer, texture, nullptr, &square,
-        game->getPlayer()->playerDirection, nullptr, SDL_FLIP_NONE);
+       orientationDegrees, nullptr, SDL_FLIP_NONE);
    
 }
 
@@ -68,8 +81,14 @@ void Projectile::OnDestroy()
     isActive = false;
 
     std::cout << "Projectile destroyed!" << std::endl;
-    SDL_FreeSurface(image);
-    SDL_DestroyTexture(texture);
+    if (texture != nullptr) {
+        SDL_DestroyTexture(texture);
+        texture = nullptr;
+    }
+    if (image != nullptr) {
+        SDL_FreeSurface(image);
+        image = nullptr;
+    }
    
 }
 

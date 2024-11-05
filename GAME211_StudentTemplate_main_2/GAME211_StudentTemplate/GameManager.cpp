@@ -1,5 +1,8 @@
 #include "GameManager.h"
 #include "Scene1.h"
+#include "Projectile.h"
+#include "Enemy.h"
+#include "EnemySpawner.h"
 
 GameManager::GameManager() {
 	windowPtr = nullptr;
@@ -7,7 +10,7 @@ GameManager::GameManager() {
 	isRunning = true;
 	currentScene = nullptr;
     player = nullptr;
-    
+    enemySpawner = nullptr;
 }
 
 bool GameManager::OnCreate() {
@@ -76,6 +79,8 @@ bool GameManager::OnCreate() {
     );
     shots.push_back(Mshots);
 
+    enemySpawner = new EnemySpawner(this);
+
     if ( player->OnCreate() == false ) {
         OnDestroy();
         return false;
@@ -94,6 +99,8 @@ bool GameManager::OnCreate() {
         OnDestroy();
         return false;
     }
+
+    enemySpawner->SpawnEnemy(Vec3(5.0f, 5.0f, 0.0f));
            
 	return true;
 }
@@ -109,6 +116,7 @@ void GameManager::Run() {
         handleEvents();
 		timer->UpdateFrameTicks();
         currentScene->Update(timer->GetDeltaTime());
+        enemySpawner->UpdateEnemies(timer->GetDeltaTime());
 		currentScene->Render();
 
        
@@ -168,6 +176,7 @@ void GameManager::OnDestroy(){
 	if (timer) delete timer;
 	if (currentScene) delete currentScene;
     if (player) delete player;
+    if (enemySpawner) delete enemySpawner;
     CleanupProjectiles();
 }
 
@@ -201,6 +210,13 @@ void GameManager::RenderShots(float scale)
 {
     for (auto* shot : shots) {
         shot->Render(scale);
+    }
+}
+
+void GameManager::RenderEnemies(float scale)
+{
+    if (enemySpawner) {
+        enemySpawner->RenderEnemies();
     }
 }
 

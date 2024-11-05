@@ -7,8 +7,11 @@
 #include "Timer.h"
 #include "Scene.h"
 #include "PlayerBody.h"
-#include "Projectile.h"
 
+
+class Projectile;
+class Enemy;
+class enemySpawner;
 
 using namespace std;
 
@@ -31,6 +34,7 @@ private:
 	// This might be unfamiliar
     class PlayerBody *player;
 	vector<Projectile*> shots;
+	class EnemySpawner* enemySpawner;
 
 	void handleEvents();
 	void LoadScene(int i);
@@ -52,6 +56,7 @@ public:
 	vector<Projectile*>& getShots() { return shots; }
 	void RenderPlayer(float scale = 1.0f);
 	void RenderShots(float scale = 1.0f);
+	void RenderEnemies(float scale = 1.0f);
 	void CleanupProjectiles();
 	SDL_Renderer* getRenderer();
 

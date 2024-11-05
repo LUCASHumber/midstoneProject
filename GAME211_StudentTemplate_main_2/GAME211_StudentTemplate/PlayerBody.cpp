@@ -6,6 +6,7 @@
 //
 
 #include "PlayerBody.h"
+#include "Projectile.h"
 
 bool PlayerBody::OnCreate()
 {
@@ -145,16 +146,15 @@ void PlayerBody::shipMove(float deltaTime) {
 
 void PlayerBody::ShootProjectile(float deltaTime)
 {
-    Projectile* newProjectiles = new Projectile(); // Assuming getShot() returns a projectile object
+    Projectile* newProjectiles = new Projectile(pos, vel, accel, 1.0f, 0.5f, 0.0f, 0.0f, 0.0f, game); 
+
 
     if (!newProjectiles->OnCreate()) {
         std::cerr << "Projectile could not be created!" << std::endl;
         delete newProjectiles;
         return;
     }
-
-    newProjectiles->setActive(true);
-
+   
     float shotSpeed = 10.0f; // Set the speed of the projectile
     float angleInRadians = -playerDirection * M_PI / 180.0f;
 
@@ -167,7 +167,7 @@ void PlayerBody::ShootProjectile(float deltaTime)
     newProjectiles->setPos(pos); // Position same as the ship
     newProjectiles->setVel(projectileVelocity); // Apply velocity
     newProjectiles->setActive(true);
-   // projectiles->OnCreate(); // Create the projectile
+    newProjectiles->OnCreate(); // Create the projectile
 
     game->getShots().push_back(newProjectiles);
    
@@ -194,9 +194,9 @@ void PlayerBody::Update( float deltaTime )
     
 
     //prints playerAngle playerDirection and x y for debugging
-    cout << playerAngle << endl;
+    /*cout << playerAngle << endl;
     cout << playerDirection << endl;
-    cout << pos.x << " " << pos.y << endl;
+    cout << pos.x << " " << pos.y << endl;*/
 
     Body::Update(deltaTime);
 

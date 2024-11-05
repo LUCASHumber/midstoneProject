@@ -53,8 +53,24 @@ void Enemy::Render(float scale)
 
 }
 
+void Enemy::MoveTowardsPlayer(const Vec3& playerPos, float deltaTime)
+{
+    Vec3 direction = playerPos - pos;
+   
+
+    float speed = 5.0f; // You can adjust this value as needed
+    vel = direction * speed;
+    pos += vel * deltaTime; // Update position based on velocity and time
+
+}
+
 void Enemy::Update(float deltaTime)
 {
+    if (game != nullptr) {
+        Vec3 playerPos = game->getPlayer()->getPos();
+        MoveTowardsPlayer(playerPos, deltaTime);
+    }
+
 }
 
 void Enemy::OnDestroy()

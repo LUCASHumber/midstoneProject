@@ -1,5 +1,8 @@
 #include "Scene1.h"
 #include <VMath.h>
+#include "Projectile.h"
+#include "Enemy.h"
+#include "EnemySpawner.h"
 
 // See notes about this constructor in Scene1.h.
 Scene1::Scene1(SDL_Window* sdlWindow_, GameManager* game_){
@@ -8,6 +11,7 @@ Scene1::Scene1(SDL_Window* sdlWindow_, GameManager* game_){
 	renderer = SDL_GetRenderer(window);
 	xAxis = 25.0f;
 	yAxis = 15.0f;
+	enemySpawner = new EnemySpawner(game); // Initialize the spawner
 }
 
 Scene1::~Scene1(){
@@ -35,9 +39,11 @@ bool Scene1::OnCreate() {
 
 	
 	//dont know how to get screen h and w
-	game->getPlayer()->setPos(Vec3(25/2,15/2,0));
+	player->setPos(Vec3(25/2,15/2,0));
 
 	
+
+	enemySpawner->SpawnEnemy(Vec3(0.0f, 0.0f, 0.0f));
 
 	if (game == nullptr) {
 		std::cerr << "Game Manager is not initialized!" << std::endl;
@@ -54,18 +60,20 @@ bool Scene1::OnCreate() {
 
 void Scene1::OnDestroy() {
 
-	projectiles = new Projectile();
-
-	if (projectiles != nullptr) {
-		projectiles->OnDestroy();  // Free the resources when the scene is destroyed
-		delete projectiles;
-		
+	for (Projectile* projectile : projectiles) {
+		if (projectile != nullptr) {
+			projectile->OnDestroy();
+			delete projectile;
+		}
 	}
+	projectiles.clear(); // Clear the vector to avoid dangling pointers
 
 	if (player != nullptr) {
 		player->OnDestroy(); // Call the player's OnDestroy method to free player resources
 		delete player;
 	}
+
+	enemySpawner->ClearEnemies();
 
 	// Clean up SDL image subsystem if you are done using it
 	IMG_Quit();
@@ -94,6 +102,8 @@ void Scene1::Update(const float deltaTime) {
 			++it;
 		}
 	}
+
+	enemySpawner->UpdateEnemies(deltaTime);
 	
 }
 
@@ -105,10 +115,13 @@ void Scene1::Render() {
 	game->RenderPlayer(0.10f);
 
 	// Render each projectile
-	auto& shots = game->getShots();
-	for (Projectile* projectile : shots) {
-		projectile->Render(0.05f); // Adjust scale as needed
+	for (Projectile* projectile : projectiles) {
+		if (projectile->getActive()) {
+			projectile->Render(0.05f);
+		}
 	}
+
+	enemySpawner->RenderEnemies();
 
 	SDL_RenderPresent(renderer);
 	
