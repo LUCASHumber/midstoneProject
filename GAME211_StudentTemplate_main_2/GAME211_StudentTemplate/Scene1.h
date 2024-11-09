@@ -3,6 +3,9 @@
 
 #include <MMath.h>
 #include "Scene.h"
+class Projectile;
+class Enemy;
+class EnemySpawner;
 
 using namespace MATH;
 class Scene1 : public Scene {
@@ -15,7 +18,8 @@ private:
     Matrix4     inverseProjection;	// set in OnCreate()
 
 	PlayerBody* player;
-	Projectile* projectiles;
+	vector<Projectile*> shotProjectiles;
+	EnemySpawner* enemySpawner;
 
 public:
 	// This constructor may be different from what you've seen before

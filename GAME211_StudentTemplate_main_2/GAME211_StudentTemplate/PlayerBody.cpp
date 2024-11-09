@@ -6,6 +6,7 @@
 //
 
 #include "PlayerBody.h"
+#include "Projectile.h"
 
 bool PlayerBody::OnCreate()
 {
@@ -145,15 +146,15 @@ void PlayerBody::shipMove(float deltaTime) {
 
 void PlayerBody::ShootProjectile(float deltaTime)
 {
-    Projectile* projectiles = game->getShots(); // Assuming getShot() returns a projectile object
-
-    if (!projectiles) {
+    Projectile* newProjectiles = new Projectile(pos, vel, accel, 1.0f, 0.5f, 0.0f, 0.0f, 0.0f, game); 
+    
+    
+    if (!newProjectiles->OnCreate()) {
         std::cerr << "Projectile could not be created!" << std::endl;
+        delete newProjectiles;
         return;
     }
-
-    projectiles->setActive(true);
-
+   
     float shotSpeed = 10.0f; // Set the speed of the projectile
     float angleInRadians = -playerDirection * M_PI / 180.0f;
 
@@ -163,16 +164,20 @@ void PlayerBody::ShootProjectile(float deltaTime)
     projectileVelocity.x = cos(angleInRadians) * shotSpeed;
     projectileVelocity.y = sin(angleInRadians) * shotSpeed;
 
-    projectiles->setPos(pos); // Position same as the ship
-    projectiles->setVel(projectileVelocity); // Apply velocity
-    projectiles->setActive(true);
-    projectiles->OnCreate(); // Create the projectile
+    newProjectiles->setPos(pos); // Position same as the ship
+    newProjectiles->setVel(projectileVelocity); // Apply velocity
+    newProjectiles->setActive(true);
+    newProjectiles->OnCreate();
+
+    game->getShots().push_back(newProjectiles);
+   
    
 
     //make projectile face same direction as player
     radiusAngle = playerDirection * M_PI / 180.0F;
     if (isShooting) {
 
+        //makes player go in oppesite direction when shooting
         impulse = 60.0f;
         vel.x = cos(radiusAngle) * -impulse * deltaTime;
         vel.y = sin(radiusAngle) * impulse * deltaTime;
@@ -191,9 +196,9 @@ void PlayerBody::Update( float deltaTime )
     
 
     //prints playerAngle playerDirection and x y for debugging
-    cout << playerAngle << endl;
+    /*cout << playerAngle << endl;
     cout << playerDirection << endl;
-    cout << pos.x << " " << pos.y << endl;
+    cout << pos.x << " " << pos.y << endl;*/
 
     Body::Update(deltaTime);
 

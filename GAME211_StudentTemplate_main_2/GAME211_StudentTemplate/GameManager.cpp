@@ -1,5 +1,8 @@
 #include "GameManager.h"
 #include "Scene1.h"
+#include "Projectile.h"
+#include "Enemy.h"
+#include "EnemySpawner.h"
 
 GameManager::GameManager() {
 	windowPtr = nullptr;
@@ -7,7 +10,7 @@ GameManager::GameManager() {
 	isRunning = true;
 	currentScene = nullptr;
     player = nullptr;
-    shots = nullptr;
+    enemySpawner = nullptr;
 }
 
 bool GameManager::OnCreate() {
@@ -61,8 +64,8 @@ bool GameManager::OnCreate() {
         angular,
         this
     );
-
-    shots = new Projectile
+    
+    Projectile* multilpleShots = new Projectile
     (
         position,
         velocity,
@@ -74,15 +77,20 @@ bool GameManager::OnCreate() {
         angular,
         this
     );
+    shots.push_back(multilpleShots);
+
+    enemySpawner = new EnemySpawner(this);
 
     if ( player->OnCreate() == false ) {
         OnDestroy();
         return false;
     }
 
-    if (shots->OnCreate() == false) {
-        OnDestroy();
-        return false;
+    for (auto* shot : shots) {
+        if (!shot->OnCreate()) {
+            OnDestroy();
+            return false;
+        }
     }
 
 
@@ -91,6 +99,8 @@ bool GameManager::OnCreate() {
         OnDestroy();
         return false;
     }
+
+    
            
 	return true;
 }
@@ -106,6 +116,7 @@ void GameManager::Run() {
         handleEvents();
 		timer->UpdateFrameTicks();
         currentScene->Update(timer->GetDeltaTime());
+        enemySpawner->UpdateEnemies(timer->GetDeltaTime());
 		currentScene->Render();
 
        
@@ -156,12 +167,20 @@ void GameManager::handleEvents()
     }
 }
 
-GameManager::~GameManager() {}
+GameManager::~GameManager() {
+    OnDestroy();
+}
 
 void GameManager::OnDestroy(){
 	if (windowPtr) delete windowPtr;
 	if (timer) delete timer;
 	if (currentScene) delete currentScene;
+    if (player) delete player;
+    for (auto* shot : shots) {
+        if (shot) delete shot;
+    }
+    if (enemySpawner) delete enemySpawner;
+    CleanupProjectiles();
 }
 
 // This might be unfamiliar
@@ -190,9 +209,33 @@ void GameManager::RenderPlayer(float scale)
     player->Render(scale);
 }
 
-void GameManager::RenderShot(float scale)
+void GameManager::RenderShots(float scale)
 {
-    shots->Render(scale);
+    
+    for (auto* shot : shots) {
+        if (shot->getActive()) {
+            shot->Render(scale);  // Render each active projectile
+        }
+    }
+}
+
+void GameManager::RenderEnemies(float scale)
+{
+    if (enemySpawner) {
+        enemySpawner->RenderEnemies(scale);
+    }
+}
+
+void GameManager::CleanupProjectiles()
+{
+    for (Projectile* projectile : shots) {
+        if (projectile) {
+            projectile->OnDestroy();
+            delete projectile;
+        }
+    }
+    shots.clear();
+
 }
 
 

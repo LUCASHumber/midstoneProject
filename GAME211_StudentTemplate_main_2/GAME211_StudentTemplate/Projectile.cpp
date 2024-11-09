@@ -5,19 +5,21 @@ bool Projectile::OnCreate()
 	image = IMG_Load( "Projectile_Basic.png" );
 	SDL_Renderer* renderer = game->getRenderer();
 	texture = SDL_CreateTextureFromSurface(renderer, image);
-	if (image == nullptr) {
+	if (texture == nullptr) {
 		std::cerr << "Can't open the image" << std::endl;
 		return false;
-	}
+    } else{
+        cout << "projectile shot" << endl;
+    }
 
 	return true;
 }
 
 void Projectile::Render(float scale)
 {
-    /*if (!isActive) {
+    if (!isActive) {
         return;
-    }*/
+    }
 
     // This is why we need game in the constructor, to get the renderer, etc.
     SDL_Renderer* renderer = game->getRenderer();
@@ -44,9 +46,11 @@ void Projectile::Render(float scale)
     square.w = static_cast<int>(w);
     square.h = static_cast<int>(h);
 
+    float orientationDegrees = orientation * 180.0f / M_PI;
+
     SDL_RenderCopyEx(renderer, texture, nullptr, &square,
-        game->getPlayer()->playerDirection, nullptr, SDL_FLIP_NONE);
-   
+       orientationDegrees, nullptr, SDL_FLIP_NONE);
+    
 }
 
 void Projectile::Update(float deltaTime)
@@ -58,6 +62,8 @@ void Projectile::Update(float deltaTime)
       
     }
 
+  /*  cout << pos.x << " " << pos.y << endl;*/
+
 }
 
 void Projectile::OnDestroy()
@@ -66,8 +72,14 @@ void Projectile::OnDestroy()
     isActive = false;
 
     std::cout << "Projectile destroyed!" << std::endl;
-    SDL_FreeSurface(image);
-    SDL_DestroyTexture(texture);
+    if (texture != nullptr) {
+        SDL_DestroyTexture(texture);
+        texture = nullptr;
+    }
+    if (image != nullptr) {
+        SDL_FreeSurface(image);
+        image = nullptr;
+    }
    
 }
 
