@@ -28,7 +28,8 @@ bool Scene1::OnCreate() {
 	/// Turn on the SDL imaging subsystem
 	IMG_Init(IMG_INIT_PNG);
 
-	player = new PlayerBody();
+	player = game->getPlayer();
+
 	// Set player image to spaceship
 	/*SDL_Surface* Playerimage;
 	SDL_Texture* Playertexture;
@@ -39,11 +40,12 @@ bool Scene1::OnCreate() {
 
 	
 	//dont know how to get screen h and w
-	player->setPos(Vec3(25/2,15/2,0));
-
+	player->setPos(Vec3(25 / 2, 15 / 2, 0));
+	
 	
 
-	enemySpawner->SpawnEnemy(Vec3(0.0f, 0.0f, 0.0f));
+	enemySpawner->SpawnEnemy(Vec3(-1.0f, 7.0f, 0.0f));
+	enemySpawner->SetProjectiles(&game->getShots());
 
 	if (game == nullptr) {
 		std::cerr << "Game Manager is not initialized!" << std::endl;
@@ -60,20 +62,24 @@ bool Scene1::OnCreate() {
 
 void Scene1::OnDestroy() {
 
-	for (Projectile* projectile : projectiles) {
+	if (game != nullptr) {
+		player->OnDestroy(); // Call the player's OnDestroy method to free player resources
+		delete player;
+	}
+
+	for (Projectile* projectile : shotProjectiles) {
 		if (projectile != nullptr) {
 			projectile->OnDestroy();
 			delete projectile;
 		}
 	}
-	projectiles.clear(); // Clear the vector to avoid dangling pointers
+	shotProjectiles.clear(); // Clear the vector to avoid dangling pointers
 
-	if (player != nullptr) {
-		player->OnDestroy(); // Call the player's OnDestroy method to free player resources
-		delete player;
+
+	if (enemySpawner != nullptr) {
+		enemySpawner->ClearEnemies();
+		delete enemySpawner;
 	}
-
-	enemySpawner->ClearEnemies();
 
 	// Clean up SDL image subsystem if you are done using it
 	IMG_Quit();
@@ -83,15 +89,17 @@ void Scene1::OnDestroy() {
 void Scene1::Update(const float deltaTime) {
 
 	// Update player
-	game->getPlayer()->Update(deltaTime);
+	player->Update(deltaTime);
 
 	//update shot
 	/*if (game->getShots()->getActive()) {
 		game->getShots()->Update(deltaTime);
 	}*/
+	//updtaes each projectile 
 	auto& shots = game->getShots();
 	for (auto it = shots.begin(); it != shots.end();) {
 		Projectile* projectile = *it;
+		
 		projectile->Update(deltaTime);
 		if (projectile->getActive() == false) {
 			projectile->OnDestroy();
@@ -103,6 +111,7 @@ void Scene1::Update(const float deltaTime) {
 		}
 	}
 
+	
 	enemySpawner->UpdateEnemies(deltaTime);
 	
 }
@@ -115,13 +124,14 @@ void Scene1::Render() {
 	game->RenderPlayer(0.10f);
 
 	// Render each projectile
-	for (Projectile* projectile : projectiles) {
+	auto& shotRender = game->getShots();
+	for (Projectile* projectile : shotRender) {
 		if (projectile->getActive()) {
-			projectile->Render(0.05f);
+			game->RenderShots(0.05f); // Render with desired scale
 		}
 	}
 
-	enemySpawner->RenderEnemies();
+	enemySpawner->RenderEnemies(0.1f);
 
 	SDL_RenderPresent(renderer);
 	
@@ -130,6 +140,6 @@ void Scene1::Render() {
 void Scene1::HandleEvents(const SDL_Event& event)
 {
 	// send events to player as needed
-	game->getPlayer()->HandleEvents(event);
+	player->HandleEvents(event);
 	
 }

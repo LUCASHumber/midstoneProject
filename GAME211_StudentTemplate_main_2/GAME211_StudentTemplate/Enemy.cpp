@@ -2,15 +2,21 @@
 
 bool Enemy::OnCreate()
 {
-	image = IMG_Load("Blinky.png");
-	SDL_Renderer* renderer = game->getRenderer();
-	texture = SDL_CreateTextureFromSurface(renderer, image);
-	if (image == nullptr) {
-		std::cerr << "Can't open the image" << std::endl;
-		return false;
-	}
+    image = IMG_Load("Blinky.png");
+    if (image == nullptr) {
+        std::cerr << "Can't open the image: " << IMG_GetError() << std::endl;
+        return false;
+    }
 
-	return false;
+    SDL_Renderer* renderer = game->getRenderer();
+    texture = SDL_CreateTextureFromSurface(renderer, image);
+    if (texture == nullptr) {
+        std::cerr << "Can't create texture from surface: " << SDL_GetError() << std::endl;
+        SDL_FreeSurface(image);
+        return false;
+    }
+
+    return true; // Return true if everything succeeds
 }
 
 void Enemy::Render(float scale)
@@ -56,12 +62,25 @@ void Enemy::Render(float scale)
 void Enemy::MoveTowardsPlayer(const Vec3& playerPos, float deltaTime)
 {
     Vec3 direction = playerPos - pos;
-   
+    
+    float distance = sqrt(direction.x * direction.x + direction.y * direction.y + direction.z * direction.z);
+    if (distance > 0.0f) {  // Avoid division by zero
+        direction /= distance; // Normalize the direction
 
-    float speed = 5.0f; // You can adjust this value as needed
-    vel = direction * speed;
-    pos += vel * deltaTime; // Update position based on velocity and time
+        float speed = 1.0f; // You can adjust this value as needed
+        vel = direction * speed;
+        pos += vel * deltaTime; // Update position based on velocity and time
+    }
 
+}
+
+bool Enemy::IsHitByProjectile(const Projectile& projectile, float collisionRadius)
+{
+    Vec3 diff = projectile.getPos() - pos;
+    float distanceSquared = diff.x * diff.x + diff.y * diff.y;
+
+    // Check if the distance between enemy and projectile is within the collision radius
+    return distanceSquared <= collisionRadius * collisionRadius;
 }
 
 void Enemy::Update(float deltaTime)

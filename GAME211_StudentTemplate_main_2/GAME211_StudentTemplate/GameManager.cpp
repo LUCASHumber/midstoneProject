@@ -65,7 +65,7 @@ bool GameManager::OnCreate() {
         this
     );
     
-    Projectile* Mshots = new Projectile
+    Projectile* multilpleShots = new Projectile
     (
         position,
         velocity,
@@ -77,7 +77,7 @@ bool GameManager::OnCreate() {
         angular,
         this
     );
-    shots.push_back(Mshots);
+    shots.push_back(multilpleShots);
 
     enemySpawner = new EnemySpawner(this);
 
@@ -100,7 +100,7 @@ bool GameManager::OnCreate() {
         return false;
     }
 
-    enemySpawner->SpawnEnemy(Vec3(5.0f, 5.0f, 0.0f));
+    
            
 	return true;
 }
@@ -176,6 +176,9 @@ void GameManager::OnDestroy(){
 	if (timer) delete timer;
 	if (currentScene) delete currentScene;
     if (player) delete player;
+    for (auto* shot : shots) {
+        if (shot) delete shot;
+    }
     if (enemySpawner) delete enemySpawner;
     CleanupProjectiles();
 }
@@ -208,23 +211,28 @@ void GameManager::RenderPlayer(float scale)
 
 void GameManager::RenderShots(float scale)
 {
+    
     for (auto* shot : shots) {
-        shot->Render(scale);
+        if (shot->getActive()) {
+            shot->Render(scale);  // Render each active projectile
+        }
     }
 }
 
 void GameManager::RenderEnemies(float scale)
 {
     if (enemySpawner) {
-        enemySpawner->RenderEnemies();
+        enemySpawner->RenderEnemies(scale);
     }
 }
 
 void GameManager::CleanupProjectiles()
 {
     for (Projectile* projectile : shots) {
-        projectile->OnDestroy();
-        delete projectile;
+        if (projectile) {
+            projectile->OnDestroy();
+            delete projectile;
+        }
     }
     shots.clear();
 

@@ -18,10 +18,10 @@ protected:
     class GameManager* game;
 
 public:
-	Projectile() : Body{}
+	/*Projectile() : Body{}
 	{
         game = nullptr;
-	}
+	}*/
 
     Projectile(Vec3 pos_, Vec3 vel_, Vec3 accel_,
         float mass_,
@@ -50,6 +50,8 @@ public:
 	void setTexture(SDL_Texture* texture_) { texture = texture_; }
     void setActive(bool active) { isActive = active; }
     bool getActive() const { return isActive; }
+    
+    Vec3 getPos() const { return pos; }
 };
 
 #endif

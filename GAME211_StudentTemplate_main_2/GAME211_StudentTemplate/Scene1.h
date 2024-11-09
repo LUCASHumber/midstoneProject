@@ -18,7 +18,7 @@ private:
     Matrix4     inverseProjection;	// set in OnCreate()
 
 	PlayerBody* player;
-	vector<Projectile*> projectiles;
+	vector<Projectile*> shotProjectiles;
 	EnemySpawner* enemySpawner;
 
 public:

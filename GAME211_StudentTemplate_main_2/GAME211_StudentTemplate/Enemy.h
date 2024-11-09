@@ -45,6 +45,7 @@ public:
 	bool OnCreate();
 	void Render(float scale = 1.0f);
     void MoveTowardsPlayer(const Vec3& playerPos, float deltaTime);
+    bool IsHitByProjectile(const Projectile& projectile, float collisionRadius);
 	void Update(float deltaTime);
 	void OnDestroy();
 	void setTexture(SDL_Texture* texture_) { texture = texture_; }

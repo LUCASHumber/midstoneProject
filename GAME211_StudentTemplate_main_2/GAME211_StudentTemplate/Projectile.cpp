@@ -3,17 +3,14 @@
 bool Projectile::OnCreate()
 {
 	image = IMG_Load( "Projectile_Basic.png" );
-    if (image == nullptr) {
-        std::cerr << "Can't open the image" << std::endl;
-        return false;
-    }
-
 	SDL_Renderer* renderer = game->getRenderer();
 	texture = SDL_CreateTextureFromSurface(renderer, image);
-	if (image == nullptr) {
+	if (texture == nullptr) {
 		std::cerr << "Can't open the image" << std::endl;
 		return false;
-	}
+    } else{
+        cout << "projectile shot" << endl;
+    }
 
 	return true;
 }
@@ -36,12 +33,6 @@ void Projectile::Render(float scale)
     // convert the position from game coords to screen coords.
     screenCoords = projectionMatrix * pos;
 
-    if (screenCoords.x < 0 || screenCoords.y < 0 ||
-        screenCoords.x > game->getSceneWidth() ||
-        screenCoords.y > game->getSceneHeight()) {
-        return; // Skip if out of bounds
-    }
-
     // Scale the image, in case the .png file is too big or small
     w = image->w * scale;
     h = image->h * scale;
@@ -59,7 +50,7 @@ void Projectile::Render(float scale)
 
     SDL_RenderCopyEx(renderer, texture, nullptr, &square,
        orientationDegrees, nullptr, SDL_FLIP_NONE);
-   
+    
 }
 
 void Projectile::Update(float deltaTime)
@@ -71,7 +62,7 @@ void Projectile::Update(float deltaTime)
       
     }
 
-
+  /*  cout << pos.x << " " << pos.y << endl;*/
 
 }
 
