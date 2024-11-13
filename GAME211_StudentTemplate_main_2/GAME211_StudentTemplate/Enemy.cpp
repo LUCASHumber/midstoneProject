@@ -77,6 +77,7 @@ void Enemy::MoveTowardsPlayer(const Vec3& playerPos, float deltaTime)
 bool Enemy::IsHitByProjectile(const Projectile& projectile, float collisionRadius)
 {
     Vec3 diff = projectile.getPos() - pos;
+    
     float distanceSquared = diff.x * diff.x + diff.y * diff.y;
 
     // Check if the distance between enemy and projectile is within the collision radius

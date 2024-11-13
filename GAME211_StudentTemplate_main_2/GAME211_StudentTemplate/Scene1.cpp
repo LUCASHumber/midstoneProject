@@ -45,6 +45,8 @@ bool Scene1::OnCreate() {
 	
 
 	enemySpawner->SpawnEnemy(Vec3(-1.0f, 7.0f, 0.0f));
+	enemySpawner->SpawnEnemy(Vec3(7.0f, -1.0f, 0.0f));
+	enemySpawner->SpawnEnemy(Vec3(10.0f, 16.0f, 0.0f));
 	enemySpawner->SetProjectiles(&game->getShots());
 
 	if (game == nullptr) {
