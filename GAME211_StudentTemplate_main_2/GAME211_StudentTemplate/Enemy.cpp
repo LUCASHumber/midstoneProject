@@ -50,10 +50,7 @@ void Enemy::Render(float scale)
     // did not work, caused player orientation to not rotate
     float orientationDegrees = orientation * 180.0f / M_PI ;
 
-
-    //made new variable playerDirection to rotate player image(replaces orientationDegree) 
-    //render player ship at + 90 radians to make image match orientation
-    //does not convert radians to degrees
+   
     SDL_RenderCopyEx(renderer, texture, nullptr, &square,
         orientationDegrees, nullptr, SDL_FLIP_NONE);
 
@@ -67,7 +64,7 @@ void Enemy::MoveTowardsPlayer(const Vec3& playerPos, float deltaTime)
     if (distance > 0.0f) {  // Avoid division by zero
         direction /= distance; // Normalize the direction
 
-        float speed = 1.0f; // You can adjust this value as needed
+        float speed = 1.0f; 
         vel = direction * speed;
         pos += vel * deltaTime; // Update position based on velocity and time
     }
@@ -77,6 +74,7 @@ void Enemy::MoveTowardsPlayer(const Vec3& playerPos, float deltaTime)
 bool Enemy::IsHitByProjectile(const Projectile& projectile, float collisionRadius)
 {
     Vec3 diff = projectile.getPos() - pos;
+    
     float distanceSquared = diff.x * diff.x + diff.y * diff.y;
 
     // Check if the distance between enemy and projectile is within the collision radius
@@ -94,6 +92,12 @@ void Enemy::Update(float deltaTime)
 
 void Enemy::OnDestroy()
 {
-    SDL_FreeSurface(image);
-    SDL_DestroyTexture(texture);
+    if (texture != nullptr) {
+        SDL_DestroyTexture(texture);
+        texture = nullptr;
+    }
+    if (image != nullptr) {
+        SDL_FreeSurface(image);
+        image = nullptr;
+    }
 }
