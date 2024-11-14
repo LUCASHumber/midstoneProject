@@ -34,7 +34,7 @@ void EnemySpawner::UpdateEnemies(float deltaTime)
         for (auto projectileit = shots.begin(); projectileit != shots.end();) {
             Projectile* projectile = *projectileit;
 
-            if (projectile->getActive() && enemy->IsHitByProjectile(*projectile, 0.10f)) {
+            if (projectile->getActive() && enemy->IsHitByProjectile(*projectile, 1.0f)) {
                 cout << "HIT.................................................." << endl;
                 enemy->OnDestroy();
                 delete enemy;
