@@ -3,6 +3,7 @@
 
 #include <MMath.h>
 #include "Scene.h"
+#include "Music.h"
 class Projectile;
 class Enemy;
 class EnemySpawner;
@@ -20,6 +21,11 @@ private:
 	PlayerBody* player;
 	vector<Projectile*> shotProjectiles;
 	EnemySpawner* enemySpawner;
+
+	int sound;
+	int song;
+	Music se;
+	Music m;
 
 public:
 	// This constructor may be different from what you've seen before
