@@ -1,29 +1,27 @@
 #pragma once
 
-#ifndef PROJECTILE_H
-#define PROJECTILE_H
+#ifndef ENEMY_H
+#define ENEMY_H
 
 #include <stdio.h>
-#include <vector>
 #include "Body.h"
 #include "GameManager.h"
 #include "PlayerBody.h"
+#include "Projectile.h"
 
-class Projectile : public Body
+class Enemy : public Body
 {
 
-    bool isActive = false;
-
 protected:
-    class GameManager* game;
+	class GameManager* game;
 
 public:
-	/*Projectile() : Body{}
-	{
+    Enemy() : Body{}
+    {
         game = nullptr;
-	}*/
+    }
 
-    Projectile(Vec3 pos_, Vec3 vel_, Vec3 accel_,
+    Enemy(Vec3 pos_, Vec3 vel_, Vec3 accel_,
         float mass_,
         float radius_,
         float orientation_,
@@ -39,19 +37,18 @@ public:
         , orientation_
         , rotation_
         , angular_
-    } 
+    }
         , game{ game_ }
     {}
 
+
 	bool OnCreate();
 	void Render(float scale = 1.0f);
+    void MoveTowardsPlayer(const Vec3& playerPos, float deltaTime);
+    bool IsHitByProjectile(const Projectile& projectile, float collisionRadius);
 	void Update(float deltaTime);
-    void OnDestroy();
+	void OnDestroy();
 	void setTexture(SDL_Texture* texture_) { texture = texture_; }
-    void setActive(bool active) { isActive = active; }
-    bool getActive() const { return isActive; }
-    
-    Vec3 getPos() const { return pos; }
 };
 
 #endif

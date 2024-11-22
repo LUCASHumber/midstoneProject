@@ -6,6 +6,7 @@
 //
 
 #include "PlayerBody.h"
+#include "Projectile.h"
 
 bool PlayerBody::OnCreate()
 {
@@ -67,7 +68,7 @@ void PlayerBody::HandleEvents( const SDL_Event& event ){
     if (event.type == SDL_KEYDOWN && event.key.repeat == 0){
         switch (event.key.keysym.scancode) {
         case SDL_SCANCODE_A: //will rotate 90 degrees left
-            playerAngle += -90.0f;
+            playerAngle -= 90.0f;
             break;
         case SDL_SCANCODE_D: //will rotate 90 degrees right
             playerAngle += 90.0f;
@@ -75,7 +76,9 @@ void PlayerBody::HandleEvents( const SDL_Event& event ){
         case SDL_SCANCODE_W:
             isBoosting = true;
             break;
-
+        case SDL_SCANCODE_SPACE:
+            isShooting = true;
+            break;
         }
     }
     //User release A or D
@@ -90,6 +93,9 @@ void PlayerBody::HandleEvents( const SDL_Event& event ){
         case SDL_SCANCODE_W:
             isBoosting = false;
             break;
+        case SDL_SCANCODE_SPACE:
+            isShooting = false;
+            break;
         }
     }
 
@@ -97,22 +103,23 @@ void PlayerBody::HandleEvents( const SDL_Event& event ){
 
 void PlayerBody::shipMove(float deltaTime) {
    
+    //have player input change direction
     playerDirection += playerAngle * deltaTime;
     playerDirection = fmod(playerDirection, 360.0f);
 
-
-    float radiusAngle = -playerDirection * M_PI / 180.0F;
+    //make player move in direction its facing
+    radiusAngle = -playerDirection * M_PI / 180.0F;
     if (isBoosting) {
 
-        float impulse = 50.0f;
-        vel.x = cos(radiusAngle) * impulse * deltaTime;
-        vel.y = sin(radiusAngle) * impulse * deltaTime;
+        boost = 10.0f;
+        vel.x = cos(radiusAngle) * boost * deltaTime;
+        vel.y = sin(radiusAngle) * boost * deltaTime;
     }
     float dampeningForce = 0.98f;
 
     vel *= dampeningForce;
   
-
+    //update pos with vel
     pos.x += vel.x * deltaTime;
     pos.y += vel.y * deltaTime;
 
@@ -130,7 +137,54 @@ void PlayerBody::shipMove(float deltaTime) {
         pos.y = 15.0f; // Reset to bottom boundary
     }
 
+    if (isShooting) {
+        ShootProjectile(deltaTime);
+        isShooting = false; // Ensure we only shoot once per press
+    }
+
 }
+
+void PlayerBody::ShootProjectile(float deltaTime)
+{
+    Projectile* newProjectiles = new Projectile(pos, vel, accel, 1.0f, 0.5f, 0.0f, 0.0f, 0.0f, game); 
+    
+    
+    if (!newProjectiles->OnCreate()) {
+        std::cerr << "Projectile could not be created!" << std::endl;
+        delete newProjectiles;
+        return;
+    }
+   
+    float shotSpeed = 10.0f; // Set the speed of the projectile
+    float angleInRadians = -playerDirection * M_PI / 180.0f;
+
+    // Set initial position and velocity of the projectile based on player direction
+    
+    Vec3 projectileVelocity;
+    projectileVelocity.x = cos(angleInRadians) * shotSpeed;
+    projectileVelocity.y = sin(angleInRadians) * shotSpeed;
+
+    newProjectiles->setPos(pos); // Position same as the ship
+    newProjectiles->setVel(projectileVelocity); // Apply velocity
+    newProjectiles->setActive(true);
+    newProjectiles->OnCreate();
+
+    game->getShots().push_back(newProjectiles);
+   
+   
+
+    //make projectile face same direction as player
+    radiusAngle = playerDirection * M_PI / 180.0F;
+    if (isShooting) {
+
+        //makes player go in oppesite direction when shooting
+        impulse = 60.0f;
+        vel.x = cos(radiusAngle) * -impulse * deltaTime;
+        vel.y = sin(radiusAngle) * impulse * deltaTime;
+    }
+}
+
+
 
 void PlayerBody::Update( float deltaTime )
 {
@@ -139,13 +193,20 @@ void PlayerBody::Update( float deltaTime )
 
     //calls shipMove
     shipMove(deltaTime);
+    
 
     //prints playerAngle playerDirection and x y for debugging
-    cout << playerAngle << endl;
+    /*cout << playerAngle << endl;
     cout << playerDirection << endl;
-    cout << pos.x << " " << pos.y << endl;
+    cout << pos.x << " " << pos.y << endl;*/
 
     Body::Update(deltaTime);
 
+}
+
+void PlayerBody::OnDestroy()
+{
+    SDL_FreeSurface(image);
+    SDL_DestroyTexture(texture);
 }
 

@@ -4,6 +4,10 @@
 
 #include <MMath.h>
 #include "Scene.h"
+#include "Music.h"
+class Projectile;
+class Enemy;
+class EnemySpawner;
 
 using namespace MATH;
 class Scene1 : public Scene {
@@ -14,6 +18,15 @@ private:
 	SDL_Renderer* renderer;	// the renderer associated with SDL window
 	Matrix4 projectionMatrix;	// set in OnCreate()
     Matrix4     inverseProjection;	// set in OnCreate()
+
+	PlayerBody* player;
+	vector<Projectile*> shotProjectiles;
+	EnemySpawner* enemySpawner;
+
+	int sound;
+	int song;
+	Music se;
+	Music m;
 
 public:
 	// This constructor may be different from what you've seen before
