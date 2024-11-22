@@ -28,6 +28,12 @@ bool Scene1::OnCreate() {
 	/// Turn on the SDL imaging subsystem
 	IMG_Init(IMG_INIT_PNG);
 
+	//Music Code
+	se.initMixer();
+	//sound = se.loadSound("fly.wav");
+	song = se.loadMusic("Wii.mp3");
+	se.playMusic(song);
+
 	player = game->getPlayer();
 
 	// Set player image to spaceship

@@ -1,5 +1,6 @@
 #include "GameManager.h"
 #include "Scene1.h"
+#include "StartScreen.h"
 #include "Projectile.h"
 #include "Enemy.h"
 #include "EnemySpawner.h"
@@ -40,7 +41,7 @@ bool GameManager::OnCreate() {
 
     // select scene for specific assignment
 
-    currentScene = new Scene1(windowPtr->GetSDL_Window(), this);
+    currentScene = new StartScreen(windowPtr->GetSDL_Window(), this);
     
     // create player
     float mass = 1.0f;
@@ -159,6 +160,9 @@ void GameManager::handleEvents()
             case SDL_SCANCODE_1:
                 LoadScene(1);
                 break;
+            case SDL_SCANCODE_2:
+                LoadScene(2);
+                break;
             default:
                 break;
             }
@@ -202,6 +206,10 @@ SDL_Renderer* GameManager::getRenderer()
     return renderer;
 }
 
+void GameManager::ChangeScene(int scene)
+{
+    LoadScene(scene);
+}
 
 // This might be unfamiliar
 void GameManager::RenderPlayer(float scale)
@@ -250,6 +258,9 @@ void GameManager::LoadScene( int i )
     {
         case 1:
             currentScene = new Scene1( windowPtr->GetSDL_Window(), this);
+            break;
+        case 2:
+            currentScene = new StartScreen(windowPtr->GetSDL_Window(), this);
             break;
         default:
             currentScene = new Scene1( windowPtr->GetSDL_Window(), this );
