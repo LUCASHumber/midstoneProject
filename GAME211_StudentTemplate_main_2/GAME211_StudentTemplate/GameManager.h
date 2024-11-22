@@ -9,11 +9,13 @@
 #include "PlayerBody.h"
 
 
+
 class Projectile;
 class Enemy;
 class enemySpawner;
 
 using namespace std;
+
 
 class GameManager {
 private:
@@ -59,6 +61,7 @@ public:
 	void RenderEnemies(float scale = 1.0f);
 	void CleanupProjectiles();
 	SDL_Renderer* getRenderer();
+	void ChangeScene(int scene);
 
 	void Run();
     
