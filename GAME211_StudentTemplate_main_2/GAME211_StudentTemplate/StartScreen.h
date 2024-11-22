@@ -16,6 +16,7 @@ private:
 	Matrix4     inverseProjection;	// set in OnCreate()
 	button* start;
 	GameManager* game;
+	SDL_Texture* backgroundTexture;
 
 public:
 	// This constructor may be different from what you've seen before
