@@ -9,6 +9,7 @@
 #include "Projectile.h"
 
 
+
 class GameManager {
 private:
 	/// These are called "forward declarations" The idea is that a pointer is 
@@ -50,6 +51,7 @@ public:
 	void RenderPlayer(float scale = 1.0f);
 	void RenderShot(float scale = 1.0f);
 	SDL_Renderer* getRenderer();
+	void ChangeScene(int scene);
 
 	void Run();
     
