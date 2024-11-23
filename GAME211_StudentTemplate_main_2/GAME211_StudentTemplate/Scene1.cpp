@@ -29,10 +29,10 @@ bool Scene1::OnCreate() {
 	IMG_Init(IMG_INIT_PNG);
 
 	//Music Code
-	se.initMixer();
-	//sound = se.loadSound("fly.wav");
-	song = se.loadMusic("Wii.mp3");
-	se.playMusic(song);
+	//se.initMixer();
+	////sound = se.loadSound("fly.wav");
+	//song = se.loadMusic("Wii.mp3");
+	//se.playMusic(song);
 
 	player = game->getPlayer();
 
