@@ -36,6 +36,10 @@ bool Scene1::OnCreate() {
 
 	player = game->getPlayer();
 
+	SDL_Surface* background;
+	background = IMG_Load("Space.png");
+	backgroundTexture = SDL_CreateTextureFromSurface(game->getRenderer(), background);
+	
 	// Set player image to spaceship
 	/*SDL_Surface* Playerimage;
 	SDL_Texture* Playertexture;
@@ -127,6 +131,16 @@ void Scene1::Update(const float deltaTime) {
 void Scene1::Render() {
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
 	SDL_RenderClear(renderer);
+
+	int    w, h;
+	SDL_Rect square;
+	SDL_QueryTexture(backgroundTexture, NULL, NULL, &w, &h);
+
+	square.x = 0;
+	square.y = 0;
+	square.w = static_cast<int>(w);
+	square.h = static_cast<int>(h);
+	SDL_RenderCopyEx(renderer, backgroundTexture, nullptr, &square, 0.0, nullptr, SDL_FLIP_NONE);
 
 	// render the player
 	game->RenderPlayer(0.10f);

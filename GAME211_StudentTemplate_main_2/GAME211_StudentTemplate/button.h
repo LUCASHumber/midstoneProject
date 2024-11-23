@@ -13,7 +13,7 @@ private:
 	MATH::Vec3 pos;
 	SDL_Renderer* ourRender;
 	std::string filePath;
-	float scale = 0.3;
+	float scale = 1.3;
 	SDL_Point mPosition;
 
 public:
