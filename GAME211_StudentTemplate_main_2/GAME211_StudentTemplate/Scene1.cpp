@@ -77,25 +77,37 @@ void Scene1::OnDestroy() {
 	if (game != nullptr) {
 		player->OnDestroy(); // Call the player's OnDestroy method to free player resources
 		delete player;
+		player = nullptr;
 	}
 
-	for (Projectile* projectile : shotProjectiles) {
+
+	auto& shots = game->getShots();
+	for (Projectile* projectile : shots) {
+
 		if (projectile != nullptr) {
 			projectile->OnDestroy();
 			delete projectile;
 		}
 	}
-	shotProjectiles.clear(); // Clear the vector to avoid dangling pointers
+	shots.clear(); // Ensure all projectiles are removed from the vector
+	
+	
 
 
 	if (enemySpawner != nullptr) {
 		enemySpawner->ClearEnemies();
 		delete enemySpawner;
+		enemySpawner = nullptr;
 	}
+
+	if (backgroundTexture != nullptr) {
+		SDL_DestroyTexture(backgroundTexture); // Destroy background texture
+	}
+
 
 	// Clean up SDL image subsystem if you are done using it
 	IMG_Quit();
-
+	game->OnDestroy();
 }
 
 void Scene1::Update(const float deltaTime) {
@@ -103,27 +115,25 @@ void Scene1::Update(const float deltaTime) {
 	// Update player
 	player->Update(deltaTime);
 
-	//update shot
-	/*if (game->getShots()->getActive()) {
-		game->getShots()->Update(deltaTime);
-	}*/
-	//updtaes each projectile 
+	// Update each projectile
 	auto& shots = game->getShots();
 	for (auto it = shots.begin(); it != shots.end();) {
 		Projectile* projectile = *it;
-		
+
 		projectile->Update(deltaTime);
 		if (projectile->getActive() == false) {
-			projectile->OnDestroy();
-			delete projectile;
+			/*projectile->OnDestroy();
+			delete projectile;*/
 			it = shots.erase(it);
+			
 		}
 		else {
 			++it;
 		}
+		
 	}
-
 	
+
 	enemySpawner->UpdateEnemies(deltaTime);
 	
 }

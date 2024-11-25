@@ -27,36 +27,41 @@ void EnemySpawner::UpdateEnemies(float deltaTime)
         Enemy* enemy = *enemyit;
         enemy->Update(deltaTime);
 
+        bool isDestroyed = false;
 
-        bool isDestroy = false;
-        
-
-        for (auto projectileit = shots.begin(); projectileit != shots.end();) {
-            Projectile* projectile = *projectileit;
+        // Check collision with projectiles
+        for (auto projectileIit = shots.begin(); projectileIit != shots.end();) {
+            Projectile* projectile = *projectileIit;
 
             if (projectile->getActive() && enemy->IsHitByProjectile(*projectile, 1.0f)) {
-                cout << "HIT.................................................." << endl;
+                std::cout << "HIT.................................................." << std::endl;
+
+                // Destroy enemy
                 enemy->OnDestroy();
                 delete enemy;
                 enemyit = enemies.erase(enemyit);
-                isDestroy = true;
+                isDestroyed = true;
 
+                // Destroy projectile
                 projectile->OnDestroy();
                 delete projectile;
-                projectileit = shots.erase(projectileit);
-                break; // Exit inner loop after destroying projectile
+                projectileIit = shots.erase(projectileIit);
+
+                break; // Exit the inner loop since the enemy is already destroyed
             }
             else {
-                ++projectileit;
+                ++projectileIit; // Move to the next projectile
             }
         }
 
-        if (!isDestroy) {
-            ++enemyit;
+        // If the enemy was destroyed, continue with the next enemy
+        if (isDestroyed) {
+            continue;
         }
-
+        else {
+            ++enemyit; // Move to the next enemy
+        }
     }
-
 }
 
 void EnemySpawner::RenderEnemies(float scale)

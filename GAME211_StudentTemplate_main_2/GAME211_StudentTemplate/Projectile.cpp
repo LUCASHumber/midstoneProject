@@ -70,16 +70,11 @@ void Projectile::OnDestroy()
 {
    
     isActive = false;
+    SDL_FreeSurface(image);
+    SDL_DestroyTexture(texture);
 
-    std::cout << "Projectile destroyed!" << std::endl;
-    if (texture != nullptr) {
-        SDL_DestroyTexture(texture);
-        texture = nullptr;
-    }
-    if (image != nullptr) {
-        SDL_FreeSurface(image);
-        image = nullptr;
-    }
+  cout << "Projectile destroyed!" << endl;
+   
    
 }
 
