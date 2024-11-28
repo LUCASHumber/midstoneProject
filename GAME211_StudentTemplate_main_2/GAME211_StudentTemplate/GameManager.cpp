@@ -88,12 +88,12 @@ bool GameManager::OnCreate() {
         return false;
     }
 
-    for (auto* shot : shots) {
+   /* for (auto* shot : shots) {
         if (!shot->OnCreate()) {
             OnDestroy();
             return false;
         }
-    }
+    }*/
 
 
     // need to create Player before validating scene

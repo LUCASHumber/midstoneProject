@@ -20,7 +20,7 @@ private:
     Matrix4     inverseProjection;	// set in OnCreate()
 
 	PlayerBody* player;
-	vector<Projectile*> shotProjectiles;
+	vector<Projectile*> shots;
 	EnemySpawner* enemySpawner;
 
 	int sound;

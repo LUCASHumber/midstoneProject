@@ -74,6 +74,7 @@ void Enemy::MoveTowardsPlayer(const Vec3& playerPos, float deltaTime)
 bool Enemy::IsHitByProjectile(const Projectile& projectile, float collisionRadius)
 {
     Vec3 diff = projectile.getPos() - pos;
+   
     
     float distanceSquared = diff.x * diff.x + diff.y * diff.y;
 
@@ -92,12 +93,7 @@ void Enemy::Update(float deltaTime)
 
 void Enemy::OnDestroy()
 {
-    if (texture != nullptr) {
-        SDL_DestroyTexture(texture);
-        texture = nullptr;
-    }
-    if (image != nullptr) {
-        SDL_FreeSurface(image);
-        image = nullptr;
-    }
+    SDL_FreeSurface(image);
+    SDL_DestroyTexture(texture);
+    cout << "enemy dead" << endl;
 }

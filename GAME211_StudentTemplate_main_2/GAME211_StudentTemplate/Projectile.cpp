@@ -11,7 +11,7 @@ bool Projectile::OnCreate()
     } else{
         cout << "projectile shot" << endl;
     }
-
+   
 	return true;
 }
 

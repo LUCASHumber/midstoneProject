@@ -28,43 +28,32 @@ bool Scene1::OnCreate() {
 	/// Turn on the SDL imaging subsystem
 	IMG_Init(IMG_INIT_PNG);
 
+
+	player = game->getPlayer();
+	player->setPos(Vec3(xAxis / 2, yAxis / 2, 0));
+
+	SDL_Surface* background;
+	background = IMG_Load("Space.png");
+	backgroundTexture = SDL_CreateTextureFromSurface(game->getRenderer(), background);
+
 	//Music Code
 	//se.initMixer();
 	////sound = se.loadSound("fly.wav");
 	//song = se.loadMusic("Wii.mp3");
 	//se.playMusic(song);
-
-	player = game->getPlayer();
-
-	SDL_Surface* background;
-	background = IMG_Load("Space.png");
-	backgroundTexture = SDL_CreateTextureFromSurface(game->getRenderer(), background);
 	
-	// Set player image to spaceship
-	/*SDL_Surface* Playerimage;
-	SDL_Texture* Playertexture;
-	Playerimage = IMG_Load("Spaceship.png");
-	Playertexture = SDL_CreateTextureFromSurface(renderer, Playerimage);
-	game->getPlayer()->setImage(Playerimage);
-	game->getPlayer()->setTexture(Playertexture);*/
-
+	auto& shots = game->getShots();
+	shots.clear();
 	
-	//dont know how to get screen h and w
-	player->setPos(Vec3(25 / 2, 15 / 2, 0));
+	enemySpawner->SetProjectiles(&shots);
+	enemySpawner->SpawnEnemy(enemySpawner->GetRandomSpawnPosition());
 	
-	
-
-	enemySpawner->SpawnEnemy(Vec3(-1.0f, 7.0f, 0.0f));
-	enemySpawner->SpawnEnemy(Vec3(7.0f, -1.0f, 0.0f));
-	enemySpawner->SpawnEnemy(Vec3(10.0f, 16.0f, 0.0f));
-	enemySpawner->SetProjectiles(&game->getShots());
-
 	if (game == nullptr) {
 		std::cerr << "Game Manager is not initialized!" << std::endl;
 		return false;
 	}
 
-	if (!game->getPlayer()->OnCreate()) {
+	if (!player->OnCreate()) {
 		return false;
 	}
 	
@@ -92,8 +81,6 @@ void Scene1::OnDestroy() {
 	shots.clear(); // Ensure all projectiles are removed from the vector
 	
 	
-
-
 	if (enemySpawner != nullptr) {
 		enemySpawner->ClearEnemies();
 		delete enemySpawner;
@@ -115,25 +102,23 @@ void Scene1::Update(const float deltaTime) {
 	// Update player
 	player->Update(deltaTime);
 
-	// Update each projectile
+	 //Update each projectile
 	auto& shots = game->getShots();
-	for (auto it = shots.begin(); it != shots.end();) {
+	for (auto it = shots.begin(); it != shots.end();)
+	{
 		Projectile* projectile = *it;
-
 		projectile->Update(deltaTime);
-		if (projectile->getActive() == false) {
-			/*projectile->OnDestroy();
-			delete projectile;*/
+		if (!projectile->getActive())
+		{
+			delete projectile;
 			it = shots.erase(it);
-			
 		}
-		else {
+		else
+		{
 			++it;
 		}
-		
 	}
 	
-
 	enemySpawner->UpdateEnemies(deltaTime);
 	
 }
@@ -155,13 +140,7 @@ void Scene1::Render() {
 	// render the player
 	game->RenderPlayer(0.10f);
 
-	// Render each projectile
-	auto& shotRender = game->getShots();
-	for (Projectile* projectile : shotRender) {
-		if (projectile->getActive()) {
-			game->RenderShots(0.05f); // Render with desired scale
-		}
-	}
+	game->RenderShots(0.05f); // Render projectiles
 
 	enemySpawner->RenderEnemies(0.1f);
 

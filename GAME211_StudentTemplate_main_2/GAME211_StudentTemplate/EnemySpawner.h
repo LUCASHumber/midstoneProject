@@ -22,6 +22,7 @@ public:
     ~EnemySpawner();
 
     void SetProjectiles(vector<Projectile*>* projectiles) { shots = *projectiles; }
+    Vec3 GetRandomSpawnPosition();
     void SpawnEnemy(const Vec3& spawnPos);
     void UpdateEnemies(float deltaTime);
     void RenderEnemies(float scale);
