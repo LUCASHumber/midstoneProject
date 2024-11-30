@@ -8,11 +8,15 @@
 #include "Body.h"
 #include "GameManager.h"
 #include "PlayerBody.h"
+#include "Music.h"
+
 
 class Projectile : public Body
 {
 
     bool isActive = false;
+    Music se;
+    int sound;
 
 protected:
     class GameManager* game;

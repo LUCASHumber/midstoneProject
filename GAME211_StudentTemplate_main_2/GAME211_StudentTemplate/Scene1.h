@@ -23,10 +23,8 @@ private:
 	vector<Projectile*> shots;
 	EnemySpawner* enemySpawner;
 
-	int sound;
 	int song;
 	Music se;
-	Music m;
 
 	SDL_Texture* backgroundTexture;
 

@@ -38,8 +38,7 @@ bool Scene1::OnCreate() {
 
 	//Music Code
 	se.initMixer();
-	sound = se.loadSound("fly.wav");
-	song = se.loadMusic("Wii.mp3");
+	song = se.loadMusic("Music.mp3");
 	se.playMusic(song);
 	
 	auto& shots = game->getShots();
