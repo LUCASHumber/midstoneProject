@@ -30,6 +30,8 @@ private:
 
 	SDL_Texture* backgroundTexture;
 
+	bool isGameOver;
+
 public:
 	// This constructor may be different from what you've seen before
 	// Notice the second parameter, and look in GameManager.cpp

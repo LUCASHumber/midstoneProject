@@ -12,11 +12,13 @@
 #include "Body.h"
 #include "GameManager.h"
 
+class Enemy;
+
 using namespace std;
 
 class PlayerBody : public Body
 {
-    float playerAngle = 0.0f;
+   
     bool isRotating = false;
 
     float boostSpeed = 100.0f;
@@ -24,8 +26,7 @@ class PlayerBody : public Body
 
     bool isShooting = false;
 
-    float boost = 10.0f;
-    float impulse = 50.0f;
+   
 
    
 protected:
@@ -60,6 +61,10 @@ public:
     }
         , game{ game_ }
     {}
+    float playerAngle = 0.0f;
+    float boost = 10.0f;
+    float impulse = 50.0f;
+
     float playerDirection;//this is here to make sure that projectile class gets access to playerDirection in order the rotate
     float radiusAngle = 0.0f;
    
@@ -71,6 +76,7 @@ public:
     void HandleEvents( const SDL_Event& event );
     void shipMove(float deltaTime);
     void ShootProjectile(float deltaTime);
+    bool IsHitByEnemy(const Enemy& enemy, float collisionRadius);
     void Update( float deltaTime );
     void OnDestroy();
     void setTexture( SDL_Texture* texture_ ) { texture = texture_; }

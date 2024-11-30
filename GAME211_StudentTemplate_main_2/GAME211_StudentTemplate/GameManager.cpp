@@ -40,9 +40,9 @@ bool GameManager::OnCreate() {
 	}
 
     // select scene for specific assignment
-
-    //currentScene = new StartScreen(windowPtr->GetSDL_Window(), this);
-    currentScene = new Scene1(windowPtr->GetSDL_Window(), this);
+    //currentScene = new Scene1(windowPtr->GetSDL_Window(), this);
+    currentScene = new StartScreen(windowPtr->GetSDL_Window(), this);
+   
     
     // create player
     float mass = 1.0f;
@@ -87,13 +87,6 @@ bool GameManager::OnCreate() {
         OnDestroy();
         return false;
     }
-
-   /* for (auto* shot : shots) {
-        if (!shot->OnCreate()) {
-            OnDestroy();
-            return false;
-        }
-    }*/
 
 
     // need to create Player before validating scene
@@ -157,6 +150,9 @@ void GameManager::handleEvents()
                 break;
             case SDL_SCANCODE_DELETE:
                 isRunning = false;
+                break;
+            case SDL_SCANCODE_R:
+                RestartGame();
                 break;
             case SDL_SCANCODE_1:
                 LoadScene(1);
@@ -245,6 +241,71 @@ void GameManager::CleanupProjectiles()
     }
     shots.clear();
 
+}
+
+void GameManager::RestartGame()
+{
+    //
+    //if (currentScene) {
+    //    currentScene->OnDestroy();
+    //    delete currentScene;
+    //    currentScene = nullptr;
+    //}
+
+    //
+    //if (player) {
+    //    delete player;
+    //    player = nullptr;
+    //}
+
+    //// Step 3: Clear all projectiles
+    //CleanupProjectiles();
+
+    //
+    //if (enemySpawner) {
+    //    delete enemySpawner;
+    //    enemySpawner = nullptr;
+    //}
+
+    //
+    //currentScene = new Scene1(windowPtr->GetSDL_Window(), this);
+    //if (!ValidateCurrentScene()) {
+    //    std::cerr << "Failed to validate scene during game restart." << std::endl;
+    //    isRunning = false; // Stop the game loop
+    //    return;
+    //}
+
+    //
+    //float mass = 1.0f;
+    //float radius = 0.5f;
+    //float orientation = 0.0f;
+    //float rotation = 0.0f;
+    //float angular = 0.0f;
+    //Vec3 position(0.5f * currentScene->getxAxis(), 0.5f * currentScene->getyAxis(), 0.0f);
+    //Vec3 velocity(0.0f, 0.0f, 0.0f);
+    //Vec3 acceleration(0.0f, 0.0f, 0.0f);
+
+    //player = new PlayerBody(
+    //    position,
+    //    velocity,
+    //    acceleration,
+    //    mass,
+    //    radius,
+    //    orientation,
+    //    rotation,
+    //    angular,
+    //    this
+    //);
+
+    //if (!player->OnCreate()) {
+    //    std::cerr << "Failed to recreate player during game restart." << std::endl;
+    //    isRunning = false; // Stop the game loop
+    //    return;
+    //}
+
+    //enemySpawner = new EnemySpawner(this);
+
+    std::cout << "Game restarted successfully!" << std::endl;
 }
 
 

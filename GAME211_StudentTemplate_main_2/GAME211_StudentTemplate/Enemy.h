@@ -41,11 +41,13 @@ public:
         , game{ game_ }
     {}
 
+    float speed = 0.0f;
 
 	bool OnCreate();
 	void Render(float scale = 1.0f);
     void MoveTowardsPlayer(const Vec3& playerPos, float deltaTime);
     bool IsHitByProjectile(const Projectile& projectile, float collisionRadius);
+    Vec3 getPos() const;
 	void Update(float deltaTime);
 	void OnDestroy();
 	void setTexture(SDL_Texture* texture_) { texture = texture_; }

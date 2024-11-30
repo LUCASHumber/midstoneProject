@@ -37,16 +37,18 @@ bool Scene1::OnCreate() {
 	backgroundTexture = SDL_CreateTextureFromSurface(game->getRenderer(), background);
 
 	//Music Code
-	//se.initMixer();
-	////sound = se.loadSound("fly.wav");
-	//song = se.loadMusic("Wii.mp3");
-	//se.playMusic(song);
+	se.initMixer();
+	sound = se.loadSound("fly.wav");
+	song = se.loadMusic("Wii.mp3");
+	se.playMusic(song);
 	
 	auto& shots = game->getShots();
 	shots.clear();
 	
 	enemySpawner->SetProjectiles(&shots);
-	enemySpawner->SpawnEnemy(enemySpawner->GetRandomSpawnPosition());
+	enemySpawner->SpawnEnemy(Vec3(-1.0, 7.0, 0.0));
+
+	isGameOver = false;
 	
 	if (game == nullptr) {
 		std::cerr << "Game Manager is not initialized!" << std::endl;
@@ -63,7 +65,7 @@ bool Scene1::OnCreate() {
 
 void Scene1::OnDestroy() {
 
-	if (game != nullptr) {
+	if (player != nullptr) {
 		player->OnDestroy(); // Call the player's OnDestroy method to free player resources
 		delete player;
 		player = nullptr;
@@ -99,6 +101,10 @@ void Scene1::OnDestroy() {
 
 void Scene1::Update(const float deltaTime) {
 
+	if (isGameOver) {
+		return;
+	}
+
 	// Update player
 	player->Update(deltaTime);
 
@@ -116,6 +122,15 @@ void Scene1::Update(const float deltaTime) {
 		else
 		{
 			++it;
+		}
+	}
+
+	for (auto& enemy : enemySpawner->GetEnemies()) {
+		enemy->Update(deltaTime);
+		if (player->IsHitByEnemy(*enemy, 0.5f)) { 
+			isGameOver = true;
+			std::cout << "Game Over!" << std::endl;
+			return;
 		}
 	}
 	
@@ -137,12 +152,12 @@ void Scene1::Render() {
 	square.h = static_cast<int>(h);
 	SDL_RenderCopyEx(renderer, backgroundTexture, nullptr, &square, 0.0, nullptr, SDL_FLIP_NONE);
 
-	// render the player
+	
+	// Render the player, projectiles, and enemies
 	game->RenderPlayer(0.10f);
-
-	game->RenderShots(0.05f); // Render projectiles
-
+	game->RenderShots(0.05f);
 	enemySpawner->RenderEnemies(0.1f);
+	
 
 	SDL_RenderPresent(renderer);
 	
@@ -150,6 +165,7 @@ void Scene1::Render() {
 
 void Scene1::HandleEvents(const SDL_Event& event)
 {
+
 	// send events to player as needed
 	player->HandleEvents(event);
 	

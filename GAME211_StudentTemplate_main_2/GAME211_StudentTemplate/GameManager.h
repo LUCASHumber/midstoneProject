@@ -33,6 +33,7 @@ private:
 	bool isRunning;
 	class Scene *currentScene;
 
+
 	// This might be unfamiliar
     class PlayerBody *player;
 	vector<Projectile*> shots;
@@ -60,6 +61,7 @@ public:
 	void RenderShots(float scale = 1.0f);
 	void RenderEnemies(float scale = 1.0f);
 	void CleanupProjectiles();
+	void RestartGame();
 	SDL_Renderer* getRenderer();
 	void ChangeScene(int scene);
 

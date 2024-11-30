@@ -7,17 +7,27 @@
 
 #include "PlayerBody.h"
 #include "Projectile.h"
+#include "Enemy.h"
+
 
 
 bool PlayerBody::OnCreate()
 {
     image = IMG_Load( "Spaceship.png" );
-    SDL_Renderer *renderer = game->getRenderer();
-    texture = SDL_CreateTextureFromSurface( renderer, image );
-    if (image == nullptr) {
-        std::cerr << "Can't open the image" << std::endl;
+    if (!image) {
+        cerr << "Failed to load image: " << SDL_GetError() << endl;
         return false;
     }
+
+    SDL_Renderer *renderer = game->getRenderer();
+    texture = SDL_CreateTextureFromSurface( renderer, image );
+    if (!texture) {
+        cerr << "Failed to create texture: " << SDL_GetError() << endl;
+        SDL_FreeSurface(image);
+        image = nullptr;
+        return false;
+    }
+
     return true;
 }
 
@@ -187,6 +197,13 @@ void PlayerBody::ShootProjectile(float deltaTime)
     }
 }
 
+bool PlayerBody::IsHitByEnemy(const Enemy& enemy, float collisionRadius) 
+{
+    Vec3 distance = enemy.getPos() - pos;
+    float distanceSquared = distance.x * distance.x + distance.y * distance.y;
+    return distanceSquared <= collisionRadius * collisionRadius;
+}
+
 
 
 void PlayerBody::Update( float deltaTime )
@@ -209,7 +226,15 @@ void PlayerBody::Update( float deltaTime )
 
 void PlayerBody::OnDestroy()
 {
-    SDL_FreeSurface(image);
-    SDL_DestroyTexture(texture);
+    if (image) {
+        SDL_FreeSurface(image);
+        image = nullptr; 
+    }
+
+    
+    if (texture) {
+        SDL_DestroyTexture(texture);
+        texture = nullptr; 
+    }
 }
 

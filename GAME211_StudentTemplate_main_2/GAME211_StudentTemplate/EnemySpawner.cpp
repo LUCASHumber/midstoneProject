@@ -21,73 +21,70 @@ void EnemySpawner::SpawnEnemy(const Vec3& spawnPos)
     }
 }
 
+const vector<Enemy*>& EnemySpawner::GetEnemies() const {
+    return enemies;
+}
+
 void EnemySpawner::UpdateEnemies(float deltaTime)
 {
-    vector<Enemy*> enemiesToRemove;
+    vector<Enemy*> enemiesToDelete; // Store enemies to delete
+    vector<Projectile*> projectilesToDelete;
+    vector<Vec3> spawnPositions; // To store new spawn positions
 
-    for (auto enemyit = enemies.begin(); enemyit != enemies.end();) {
-        Enemy* enemy = *enemyit;
+    for (auto enemyIt = enemies.begin(); enemyIt != enemies.end(); ) {
+        Enemy* enemy = *enemyIt;
         enemy->Update(deltaTime);
 
         bool isDestroyed = false;
 
         // Check collision with projectiles
         auto& shots = game->getShots();
-        for (auto projectileit = shots.begin(); projectileit != shots.end();) {
-            Projectile* projectile = *projectileit;
-          
+        for (auto projectileIt = shots.begin(); projectileIt != shots.end(); ) {
+            Projectile* projectile = *projectileIt;
+
             if (enemy->IsHitByProjectile(*projectile, 0.5f)) {
                 std::cout << "HIT.................................................." << std::endl;
 
-                //// Destroy enemy
-                //enemy->OnDestroy();
-                //delete enemy;
-                //enemyit = enemies.erase(enemyit);
-                //isDestroyed = true;
+                // Mark both the enemy and projectile for deletion
+                enemiesToDelete.push_back(enemy);
+                projectilesToDelete.push_back(projectile);
 
-                //// Destroy projectile
-                //projectile->OnDestroy();
-                //delete projectile;
-                //projectileit = shots.erase(projectileit);
-
-                //// Spawn two new enemies outside the view screen
-                //
-                //SpawnEnemy(GetRandomSpawnPosition()); // Left spawn
-                //SpawnEnemy(GetRandomSpawnPosition()); // Right spawn
-
-                enemiesToRemove.push_back(enemy);
-                projectile->OnDestroy();
-                delete projectile;
-                projectileit = shots.erase(projectileit);
-
-                // Spawn new enemies at random positions
-                SpawnEnemy(GetRandomSpawnPosition());
-                SpawnEnemy(GetRandomSpawnPosition());
+                // Determine new spawn positions
+                spawnPositions.push_back(GetRandomSpawnPosition());
+                spawnPositions.push_back(GetRandomSpawnPosition());
 
                 isDestroyed = true;
-
-                break; // Exit the inner loop since the enemy is already destroyed
+                projectileIt = shots.erase(projectileIt); // Safely erase the projectile
             }
             else {
-                ++projectileit; // Move to the next projectile
+                ++projectileIt;
             }
         }
 
-        // If the enemy was destroyed, continue with the next enemy
         if (isDestroyed) {
-            //continue;
-            enemyit = enemies.erase(enemyit);
+            enemyIt = enemies.erase(enemyIt); // Safely erase the enemy from the vector
         }
         else {
-            ++enemyit; // Move to the next enemy
+            ++enemyIt;
         }
     }
 
-    for (Enemy* enemy : enemiesToRemove) {
+    // Clean up all marked enemies
+    for (Enemy* enemy : enemiesToDelete) {
         enemy->OnDestroy();
         delete enemy;
     }
-    enemiesToRemove.clear();
+
+    // Clean up all marked projectiles
+    for (Projectile* projectile : projectilesToDelete) {
+        projectile->OnDestroy();
+        delete projectile;
+    }
+
+    // Spawn new enemies after the loop
+    for (const Vec3& spawnPos : spawnPositions) {
+        SpawnEnemy(spawnPos);
+    }
 
 }
 

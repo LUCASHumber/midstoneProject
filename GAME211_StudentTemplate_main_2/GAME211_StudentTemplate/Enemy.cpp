@@ -64,7 +64,7 @@ void Enemy::MoveTowardsPlayer(const Vec3& playerPos, float deltaTime)
     if (distance > 0.0f) {  // Avoid division by zero
         direction /= distance; // Normalize the direction
 
-        float speed = 1.0f; 
+        speed = 0.5f; 
         vel = direction * speed;
         pos += vel * deltaTime; // Update position based on velocity and time
     }
@@ -80,6 +80,11 @@ bool Enemy::IsHitByProjectile(const Projectile& projectile, float collisionRadiu
 
     // Check if the distance between enemy and projectile is within the collision radius
     return distanceSquared <= collisionRadius * collisionRadius;
+}
+
+Vec3 Enemy::getPos() const
+{
+    return pos;
 }
 
 void Enemy::Update(float deltaTime)
