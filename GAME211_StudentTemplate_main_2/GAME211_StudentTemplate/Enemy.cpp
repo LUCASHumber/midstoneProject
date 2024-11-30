@@ -2,7 +2,7 @@
 
 bool Enemy::OnCreate()
 {
-    image = IMG_Load("Blinky.png");
+    image = IMG_Load("Enemy_4short.png");
     if (image == nullptr) {
         std::cerr << "Can't open the image: " << IMG_GetError() << std::endl;
         return false;
