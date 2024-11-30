@@ -2,7 +2,14 @@
 
 bool Enemy::OnCreate()
 {
+<<<<<<< HEAD
     image = IMG_Load("Enemy_4short.png");
+=======
+
+
+    image = IMG_Load("Enemy_4Short.png");
+
+>>>>>>> f3545dbe73ff74f67068c73132ee0917a76b47f0
     if (image == nullptr) {
         std::cerr << "Can't open the image: " << IMG_GetError() << std::endl;
         return false;
