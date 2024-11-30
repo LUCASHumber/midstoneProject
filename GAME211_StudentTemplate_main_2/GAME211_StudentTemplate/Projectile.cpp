@@ -11,6 +11,9 @@ bool Projectile::OnCreate()
     } else{
         cout << "projectile shot" << endl;
     }
+
+    se.loadSound("Shoot.wav");
+    se.playSound(sound);
    
 	return true;
 }
