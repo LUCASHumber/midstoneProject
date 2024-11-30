@@ -129,6 +129,7 @@ void Scene1::Update(const float deltaTime) {
 		enemy->Update(deltaTime);
 		if (player->IsHitByEnemy(*enemy, 0.5f)) { 
 			isGameOver = true;
+			player->OnDestroy();
 			std::cout << "Game Over!" << std::endl;
 			return;
 		}
