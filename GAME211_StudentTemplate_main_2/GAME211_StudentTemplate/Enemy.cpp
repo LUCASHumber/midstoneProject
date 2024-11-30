@@ -2,7 +2,10 @@
 
 bool Enemy::OnCreate()
 {
+
+
     image = IMG_Load("Enemy_4Short.png");
+
     if (image == nullptr) {
         std::cerr << "Can't open the image: " << IMG_GetError() << std::endl;
         return false;
@@ -64,7 +67,7 @@ void Enemy::MoveTowardsPlayer(const Vec3& playerPos, float deltaTime)
     if (distance > 0.0f) {  // Avoid division by zero
         direction /= distance; // Normalize the direction
 
-        float speed = 1.0f; 
+        speed = 0.5f; 
         vel = direction * speed;
         pos += vel * deltaTime; // Update position based on velocity and time
     }
@@ -74,11 +77,17 @@ void Enemy::MoveTowardsPlayer(const Vec3& playerPos, float deltaTime)
 bool Enemy::IsHitByProjectile(const Projectile& projectile, float collisionRadius)
 {
     Vec3 diff = projectile.getPos() - pos;
+   
     
     float distanceSquared = diff.x * diff.x + diff.y * diff.y;
 
     // Check if the distance between enemy and projectile is within the collision radius
     return distanceSquared <= collisionRadius * collisionRadius;
+}
+
+Vec3 Enemy::getPos() const
+{
+    return pos;
 }
 
 void Enemy::Update(float deltaTime)
@@ -92,12 +101,7 @@ void Enemy::Update(float deltaTime)
 
 void Enemy::OnDestroy()
 {
-    if (texture != nullptr) {
-        SDL_DestroyTexture(texture);
-        texture = nullptr;
-    }
-    if (image != nullptr) {
-        SDL_FreeSurface(image);
-        image = nullptr;
-    }
+    SDL_FreeSurface(image);
+    SDL_DestroyTexture(texture);
+    cout << "enemy dead" << endl;
 }

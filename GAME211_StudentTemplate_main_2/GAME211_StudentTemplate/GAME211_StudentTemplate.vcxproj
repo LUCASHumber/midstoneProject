@@ -20,12 +20,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Body.cpp" />
-
     <ClCompile Include="button.cpp" />
-
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="EnemySpawner.cpp" />
-
     <ClCompile Include="GameManager.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Music.cpp" />
@@ -38,10 +35,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Body.h" />
-
-
+    <ClInclude Include="button.h" />
     <ClInclude Include="Enemy.h" />
-
+    <ClInclude Include="EnemySpawner.h" />
     <ClInclude Include="GameManager.h" />
     <ClInclude Include="Music.h" />
     <ClInclude Include="PlayerBody.h" />

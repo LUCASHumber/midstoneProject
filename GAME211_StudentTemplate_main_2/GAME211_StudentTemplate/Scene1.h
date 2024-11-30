@@ -20,7 +20,7 @@ private:
     Matrix4     inverseProjection;	// set in OnCreate()
 
 	PlayerBody* player;
-	vector<Projectile*> shotProjectiles;
+	vector<Projectile*> shots;
 	EnemySpawner* enemySpawner;
 
 	int sound;
@@ -29,6 +29,8 @@ private:
 	Music m;
 
 	SDL_Texture* backgroundTexture;
+
+	bool isGameOver;
 
 public:
 	// This constructor may be different from what you've seen before

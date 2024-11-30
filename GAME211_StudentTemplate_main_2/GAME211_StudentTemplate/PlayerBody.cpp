@@ -7,16 +7,27 @@
 
 #include "PlayerBody.h"
 #include "Projectile.h"
+#include "Enemy.h"
+
+
 
 bool PlayerBody::OnCreate()
 {
     image = IMG_Load( "Spaceship.png" );
-    SDL_Renderer *renderer = game->getRenderer();
-    texture = SDL_CreateTextureFromSurface( renderer, image );
-    if (image == nullptr) {
-        std::cerr << "Can't open the image" << std::endl;
+    if (!image) {
+        cerr << "Failed to load image: " << SDL_GetError() << endl;
         return false;
     }
+
+    SDL_Renderer *renderer = game->getRenderer();
+    texture = SDL_CreateTextureFromSurface( renderer, image );
+    if (!texture) {
+        cerr << "Failed to create texture: " << SDL_GetError() << endl;
+        SDL_FreeSurface(image);
+        image = nullptr;
+        return false;
+    }
+
     return true;
 }
 
@@ -147,19 +158,19 @@ void PlayerBody::shipMove(float deltaTime) {
 void PlayerBody::ShootProjectile(float deltaTime)
 {
     Projectile* newProjectiles = new Projectile(pos, vel, accel, 1.0f, 0.5f, 0.0f, 0.0f, 0.0f, game); 
-    
-    
+   
+
     if (!newProjectiles->OnCreate()) {
         std::cerr << "Projectile could not be created!" << std::endl;
         delete newProjectiles;
         return;
     }
-   
+
     float shotSpeed = 10.0f; // Set the speed of the projectile
     float angleInRadians = -playerDirection * M_PI / 180.0f;
 
     // Set initial position and velocity of the projectile based on player direction
-    
+
     Vec3 projectileVelocity;
     projectileVelocity.x = cos(angleInRadians) * shotSpeed;
     projectileVelocity.y = sin(angleInRadians) * shotSpeed;
@@ -167,11 +178,13 @@ void PlayerBody::ShootProjectile(float deltaTime)
     newProjectiles->setPos(pos); // Position same as the ship
     newProjectiles->setVel(projectileVelocity); // Apply velocity
     newProjectiles->setActive(true);
-    newProjectiles->OnCreate();
+
+    if (newProjectiles->OnCreate()) {
+        cout << "shots created" << endl;
+    }
 
     game->getShots().push_back(newProjectiles);
-   
-   
+    
 
     //make projectile face same direction as player
     radiusAngle = playerDirection * M_PI / 180.0F;
@@ -182,6 +195,13 @@ void PlayerBody::ShootProjectile(float deltaTime)
         vel.x = cos(radiusAngle) * -impulse * deltaTime;
         vel.y = sin(radiusAngle) * impulse * deltaTime;
     }
+}
+
+bool PlayerBody::IsHitByEnemy(const Enemy& enemy, float collisionRadius) 
+{
+    Vec3 distance = enemy.getPos() - pos;
+    float distanceSquared = distance.x * distance.x + distance.y * distance.y;
+    return distanceSquared <= collisionRadius * collisionRadius;
 }
 
 
@@ -206,7 +226,15 @@ void PlayerBody::Update( float deltaTime )
 
 void PlayerBody::OnDestroy()
 {
-    SDL_FreeSurface(image);
-    SDL_DestroyTexture(texture);
+    if (image) {
+        SDL_FreeSurface(image);
+        image = nullptr; 
+    }
+
+    
+    if (texture) {
+        SDL_DestroyTexture(texture);
+        texture = nullptr; 
+    }
 }
 

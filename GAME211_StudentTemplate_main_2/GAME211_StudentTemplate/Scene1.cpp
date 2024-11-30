@@ -28,43 +28,34 @@ bool Scene1::OnCreate() {
 	/// Turn on the SDL imaging subsystem
 	IMG_Init(IMG_INIT_PNG);
 
-	//Music Code
-	se.initMixer();
-	//sound = se.loadSound("fly.wav");
-	song = se.loadMusic("Wii.mp3");
-	se.playMusic(song);
 
 	player = game->getPlayer();
+	player->setPos(Vec3(xAxis / 2, yAxis / 2, 0));
 
 	SDL_Surface* background;
 	background = IMG_Load("Space.png");
 	backgroundTexture = SDL_CreateTextureFromSurface(game->getRenderer(), background);
-	
-	// Set player image to spaceship
-	/*SDL_Surface* Playerimage;
-	SDL_Texture* Playertexture;
-	Playerimage = IMG_Load("Spaceship.png");
-	Playertexture = SDL_CreateTextureFromSurface(renderer, Playerimage);
-	game->getPlayer()->setImage(Playerimage);
-	game->getPlayer()->setTexture(Playertexture);*/
 
+	//Music Code
+	se.initMixer();
+	sound = se.loadSound("fly.wav");
+	song = se.loadMusic("Wii.mp3");
+	se.playMusic(song);
 	
-	//dont know how to get screen h and w
-	player->setPos(Vec3(25 / 2, 15 / 2, 0));
+	auto& shots = game->getShots();
+	shots.clear();
 	
-	
+	enemySpawner->SetProjectiles(&shots);
+	enemySpawner->SpawnEnemy(Vec3(-1.0, 7.0, 0.0));
 
-	enemySpawner->SpawnEnemy(Vec3(-1.0f, 7.0f, 0.0f));
-	enemySpawner->SpawnEnemy(Vec3(7.0f, -1.0f, 0.0f));
-	enemySpawner->SpawnEnemy(Vec3(10.0f, 16.0f, 0.0f));
-	enemySpawner->SetProjectiles(&game->getShots());
-
+	isGameOver = false;
+	
 	if (game == nullptr) {
 		std::cerr << "Game Manager is not initialized!" << std::endl;
 		return false;
 	}
 
-	if (!game->getPlayer()->OnCreate()) {
+	if (!player->OnCreate()) {
 		return false;
 	}
 	
@@ -74,55 +65,74 @@ bool Scene1::OnCreate() {
 
 void Scene1::OnDestroy() {
 
-	if (game != nullptr) {
+	if (player != nullptr) {
 		player->OnDestroy(); // Call the player's OnDestroy method to free player resources
 		delete player;
+		player = nullptr;
 	}
 
-	for (Projectile* projectile : shotProjectiles) {
+
+	auto& shots = game->getShots();
+	for (Projectile* projectile : shots) {
+
 		if (projectile != nullptr) {
 			projectile->OnDestroy();
 			delete projectile;
 		}
 	}
-	shotProjectiles.clear(); // Clear the vector to avoid dangling pointers
-
-
+	shots.clear(); // Ensure all projectiles are removed from the vector
+	
+	
 	if (enemySpawner != nullptr) {
 		enemySpawner->ClearEnemies();
 		delete enemySpawner;
+		enemySpawner = nullptr;
 	}
+
+	if (backgroundTexture != nullptr) {
+		SDL_DestroyTexture(backgroundTexture); // Destroy background texture
+	}
+
 
 	// Clean up SDL image subsystem if you are done using it
 	IMG_Quit();
-
+	game->OnDestroy();
 }
 
 void Scene1::Update(const float deltaTime) {
 
+	if (isGameOver) {
+		return;
+	}
+
 	// Update player
 	player->Update(deltaTime);
 
-	//update shot
-	/*if (game->getShots()->getActive()) {
-		game->getShots()->Update(deltaTime);
-	}*/
-	//updtaes each projectile 
+	 //Update each projectile
 	auto& shots = game->getShots();
-	for (auto it = shots.begin(); it != shots.end();) {
+	for (auto it = shots.begin(); it != shots.end();)
+	{
 		Projectile* projectile = *it;
-		
 		projectile->Update(deltaTime);
-		if (projectile->getActive() == false) {
-			projectile->OnDestroy();
+		if (!projectile->getActive())
+		{
 			delete projectile;
 			it = shots.erase(it);
 		}
-		else {
+		else
+		{
 			++it;
 		}
 	}
 
+	for (auto& enemy : enemySpawner->GetEnemies()) {
+		enemy->Update(deltaTime);
+		if (player->IsHitByEnemy(*enemy, 0.5f)) { 
+			isGameOver = true;
+			std::cout << "Game Over!" << std::endl;
+			return;
+		}
+	}
 	
 	enemySpawner->UpdateEnemies(deltaTime);
 	
@@ -142,18 +152,12 @@ void Scene1::Render() {
 	square.h = static_cast<int>(h);
 	SDL_RenderCopyEx(renderer, backgroundTexture, nullptr, &square, 0.0, nullptr, SDL_FLIP_NONE);
 
-	// render the player
+	
+	// Render the player, projectiles, and enemies
 	game->RenderPlayer(0.10f);
-
-	// Render each projectile
-	auto& shotRender = game->getShots();
-	for (Projectile* projectile : shotRender) {
-		if (projectile->getActive()) {
-			game->RenderShots(0.05f); // Render with desired scale
-		}
-	}
-
+	game->RenderShots(0.05f);
 	enemySpawner->RenderEnemies(0.1f);
+	
 
 	SDL_RenderPresent(renderer);
 	
@@ -161,6 +165,7 @@ void Scene1::Render() {
 
 void Scene1::HandleEvents(const SDL_Event& event)
 {
+
 	// send events to player as needed
 	player->HandleEvents(event);
 	
