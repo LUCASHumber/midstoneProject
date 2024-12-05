@@ -126,11 +126,17 @@ void Scene1::Update(const float deltaTime) {
 
 	for (auto& enemy : enemySpawner->GetEnemies()) {
 		enemy->Update(deltaTime);
-		if (player->IsHitByEnemy(*enemy, 0.5f)) { 
+		if (player->IsHitByEnemy(*enemy, 0.5f)) { // Collision detected
+			// Mark game as over and destroy player
 			isGameOver = true;
+			std::cout << "Player collided with enemy. Game Over!" << std::endl;
+
+			// Destroy the player
 			player->OnDestroy();
-			std::cout << "Game Over!" << std::endl;
-			return;
+			delete player;
+			player = nullptr;
+
+			return; // Exit early to avoid further updates
 		}
 	}
 	
