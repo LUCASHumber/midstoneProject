@@ -226,15 +226,7 @@ void PlayerBody::Update( float deltaTime )
 
 void PlayerBody::OnDestroy()
 {
-    if (image) {
-        SDL_FreeSurface(image);
-        image = nullptr; 
-    }
-
-    
-    if (texture) {
-        SDL_DestroyTexture(texture);
-        texture = nullptr; 
-    }
+    SDL_FreeSurface(image);
+    SDL_DestroyTexture(texture);
 }
 

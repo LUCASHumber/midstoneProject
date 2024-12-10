@@ -64,7 +64,7 @@ bool Scene1::OnCreate() {
 
 void Scene1::OnDestroy() {
 
-	if (player != nullptr) {
+	if (game != nullptr) {
 		player->OnDestroy(); // Call the player's OnDestroy method to free player resources
 		delete player;
 		player = nullptr;
@@ -133,8 +133,8 @@ void Scene1::Update(const float deltaTime) {
 
 			// Destroy the player
 			player->OnDestroy();
-			delete player;
-			player = nullptr;
+			
+			
 
 			return; // Exit early to avoid further updates
 		}
